@@ -1,0 +1,34 @@
+{
+  "name": "@apigrate/autotask-restapi",
+  "version": "1.0.0",
+  "description": "NodeJS library for the Autotask REST API.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/apigrate/autotask-restapi.git"
+  },
+  "keywords": [
+    "Autotask",
+    "API",
+    "REST",
+    "Apigrate"
+  ],
+  "author": "Derek Gau",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/apigrate/autotask-restapi/issues"
+  },
+  "homepage": "https://github.com/apigrate/autotask-restapi#readme",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "node-fetch": "^2.6.0",
+    "query-string": "^6.12.1"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "jest": "^26.0.1"
+  }
+}
