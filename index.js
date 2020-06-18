@@ -1,3 +1,18 @@
+/*
+  Copyright 2020 Apigrate LLC
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
 const fetch = require('node-fetch');
 const qs = require('query-string');
 const debug = require('debug')('autotask:restapi');
@@ -10,7 +25,7 @@ class AutotaskRestApi {
    * @param {string} secret Autotas API secret associated with the user (required)
    * @param {string} code Autotask API integration tracking code (required)
    * @param {object} options
-   * @param {string} options.base_url the REST API base url. (Default https://webservices2.autotask.net/ATServicesRest)
+   * @param {string} options.base_url the REST API base url. (Default https://webservices2.autotask.net/ATServicesRest/)
    * @param {string} options.version Autotask REST API decimal version (e.g. 1.0). (Default 1.0);
    * 
    */
@@ -24,7 +39,7 @@ class AutotaskRestApi {
     this.code = code;
     
     //TODO: change entrypoint base url once released... 
-    this.base_url = `https://webservices2.autotask.net/ATServicesRest`; //As returned by zoneInformation.url
+    this.base_url = `https://webservices2.autotask.net/ATServicesRest/`; //As returned by zoneInformation.url
     this.version = '1.0';
     
     if(options){
@@ -233,6 +248,10 @@ class AutotaskRestApi {
             return await this._post(`/${entity.name}`, toSave);
           },
 
+          delete : async (id)=>{
+            return await this._delete(`/${entity.name}/${id}`);
+          },
+
           //missing properties set to null!
           replace : async (toSave)=>{
             return await this._put(`/${entity.name}`, toSave);
@@ -257,7 +276,7 @@ class AutotaskRestApi {
   /**
    * Access the Autotask REST API. 
    * 
-   * @returns the connector instance, which has references to every
+   * @returns the connector instance object, which has references to every
    * entity in the API. You can use each entity to perform API calls.
    * 
    * @example
@@ -319,27 +338,33 @@ class AutotaskRestApi {
         fetchParms.headers.Secret = this.secret;
       }
       if(payload) fetchParms.body = JSON.stringify(payload)
-      let querystring = query ? qs.stringify(query) : '';
+      let querystring = query ? '?'+qs.stringify(query) : '';
 
-      let full_url = `${this.zoneInfo ? this.zoneInfo.url : this.base_url}/V${this.version}${endpoint}?${querystring}`;
+      let full_url = `${this.zoneInfo ? this.zoneInfo.url : this.base_url}V${this.version}${endpoint}${querystring}`;
       debug(`${method}: ${full_url}`);
+      if(payload) verbose(`  sending: ${JSON.stringify(payload)}`);
 
       let response = await fetch(`${full_url}`, fetchParms);
       
-      let result = await response.json();
       if(response.ok){
+        let result = await response.json();
         debug(`...ok. (HTTP ${response.status})`);
-      
-        verbose(`result: ${JSON.stringify(result)}`);
+        verbose(`  received: ${JSON.stringify(result)}`);
         return result;
       } else {
+        let result = await response.text();
         debug(`...error. (HTTP ${response.status})`);
-
-        verbose(`result: ${JSON.stringify(result)}`);
-        return result;
+        verbose(`  received: ${result}`);
+       
+        throw new AutotaskApiError(`HTTP ${response.status}\n${result}`);
       }
     }catch(ex){
-      console.error(ex);
+      if(ex instanceof AutotaskApiError){
+        throw ex;
+      } else {
+        console.error(ex);
+      }
+      
     }
   }
 
