@@ -4,6 +4,9 @@ This connector simplifies interaction with the [Autotask PSA REST API](https://w
 
 > Please insure you are using a LTS version of NodeJS, or at least a version that supports ES6 promises.
 
+```bash
+npm install @apigrate/autotask-restapi --save
+```
 ## Connecting to Autotask
 
 ```javascript
@@ -413,5 +416,5 @@ The following is a list of all Autotask entities supported by the connector.
 Support for debugging is provided via the [debug]() library. Two levels of debugging are supported:
 
 * **debug** include `autotask:restapi` in your `DEBUG` environment variable
-* **verbose** include `autotask:restapi:verbose` or simply `autotask:restapi*` in your DEBUG environment variable.
+* **verbose** include `autotask:restapi:verbose` or simply `autotask:restapi*` in your `DEBUG` environment variable.
 
