@@ -224,21 +224,367 @@ result = await api.Companies.query({
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
 
 ### create
+Creates an entity.
+
+The following creates **Company** using the **Companies** api.
+```javascript
+ let myCompany = {
+      CompanyName: "Sirius Cybernetics Corporation",
+      CompanyType: 3,
+      Phone: '8005551212',
+      OwnerResourceID: 29683995
+    };;
+result = await api.Companies.create(myCompany);
+```
+..which yields the `result`:
+```json
+{
+  "itemId": 29683664
+}
+```
+
+> Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
+
+To illustrate the **child record** relationship, the following example will create a **ToDo** for a **Company** using the **CompanyToDos** api.
+```javascript
+ let myToDo = {
+  ActionType: 3,
+  AssignedToResourceID: 29683995,
+  CompanyID: 0, 
+  ActivityDescription: "Learn more about the Autotask REST API",
+  StartDateTime: '2020-06-15',
+  EndDateTime: '2020-06-16',
+};
+result = await api.CompanyToDos.create(0, myToDo);
+```
+Note the use of the parent id (company id = 0) as the first argument of the `create` method. The parent id is required as the first parameter of the method.
+It yields the `result`:
+```json
+{
+  "itemId": 29684378
+}
+```
+
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Creating_Resources.htm)
 
 ### update
+Updates an entity. This updates **ONLY the fields you specify**, leaving other fields on it unchanged.
+
+> Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
+
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Updating_Data_PATCH.htm)
 
 ### replace
+Replaces an entity. This replaces **the entire entity**, obliterating its prior contents (except for readonly fields) and replacing it with the data you provide.
+
+> Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
+
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Updating_Data_PUT.htm)
 
 ### delete
+Deletes an entity by id.
+
+> Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
+
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Delete_Operation.htm)
 
 ### info
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Resource_Child_Access_URLs.htm#Entity)
 
 ### fieldInfo
+Get metadata about a given entity's fields. This includes information about the data type; whether the field is required, read-only etc; and any valid-values that should be used.
+
+```javascript
+result = await api.AccountToDo.fieldInfo();
+```
+
+This will yield a `result`:
+
+```json
+{
+  "fields": [
+    {
+      "name": "ActionType",
+      "dataType": "integer",
+      "length": 0,
+      "isRequired": true,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": true,
+      "picklistValues": [
+        {
+          "value": "0",
+          "label": "Opportunity Update",
+          "isDefaultValue": false,
+          "sortOrder": 0,
+          "parentValue": "",
+          "isActive": true,
+          "isSystem": true
+        },
+        {
+          "value": "1",
+          "label": "Phone Call",
+          "isDefaultValue": false,
+          "sortOrder": 0,
+          "parentValue": "",
+          "isActive": true,
+          "isSystem": true
+        },
+        {
+          "value": "2",
+          "label": "Meeting",
+          "isDefaultValue": false,
+          "sortOrder": 0,
+          "parentValue": "",
+          "isActive": true,
+          "isSystem": true
+        },
+        {
+          "value": "3",
+          "label": "General",
+          "isDefaultValue": false,
+          "sortOrder": 0,
+          "parentValue": "",
+          "isActive": true,
+          "isSystem": true
+        },
+        {
+          "value": "5",
+          "label": "Quick Note",
+          "isDefaultValue": false,
+          "sortOrder": 0,
+          "parentValue": "",
+          "isActive": true,
+          "isSystem": true
+        },
+        {
+          "value": "29682776",
+          "label": "Email",
+          "isDefaultValue": false,
+          "sortOrder": 0,
+          "parentValue": "",
+          "isActive": true,
+          "isSystem": false
+        }
+      ],
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "ActivityDescription",
+      "dataType": "string",
+      "length": 32000,
+      "isRequired": false,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "AssignedToResourceID",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": true,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Resource",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "CompanyID",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": true,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Company",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "CompletedDate",
+      "dataType": "datetime",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "ContactID",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Contact",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "ContractID",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Contract",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "CreateDateTime",
+      "dataType": "datetime",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": true,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "CreatorResourceID",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": true,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Resource",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "EndDateTime",
+      "dataType": "datetime",
+      "length": 0,
+      "isRequired": true,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "Id",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": true,
+      "isReadOnly": true,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "ImpersonatorCreatorResourceID",
+      "dataType": "integer",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": true,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Resource",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "LastModifiedDate",
+      "dataType": "datetime",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": true,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "OpportunityID",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Opportunity",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "StartDateTime",
+      "dataType": "datetime",
+      "length": 0,
+      "isRequired": true,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": false,
+      "referenceEntityType": "",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    },
+    {
+      "name": "TicketID",
+      "dataType": "long",
+      "length": 0,
+      "isRequired": false,
+      "isReadOnly": false,
+      "isQueryable": true,
+      "isReference": true,
+      "referenceEntityType": "Ticket",
+      "isPickList": false,
+      "picklistValues": null,
+      "picklistParentValueField": "",
+      "isSupportedWebhookField": false
+    }
+  ]
+}
+```
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Resource_Child_Access_URLs.htm#Entity)
 
 ### udfInfo
