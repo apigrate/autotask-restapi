@@ -32,7 +32,8 @@ The following sections list the methods on each available entity on the connecto
 
 ### count
 
-Counts entities. Use Autotask query filter syntax to provide criteria for the count.
+Counts entities. Use Autotask **query filter syntax** to provide criteria for the count.
+
 ```javascript
 // Count companies with a CompanyName beginning with "B"
 result = await api.Companies.count({

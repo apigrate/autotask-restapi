@@ -401,11 +401,7 @@ class AutotaskRestApi {
         verbose(`  received: ${JSON.stringify(result)}`);
         return result;
       } else {
-        let result = await response.text();
-        debug(`...error. (HTTP ${response.status})`);
-        verbose(`  received: ${result}`);
-       
-        throw new AutotaskApiError(`HTTP ${response.status}\n${result}`);
+        result = await this._handleNotOk(response)
       }
     }catch(ex){
       if(ex instanceof AutotaskApiError){
@@ -417,12 +413,79 @@ class AutotaskRestApi {
     }
   }
 
+  /**
+   * Handles API responses that are not in the normal HTTP OK code range (e.g. 200) in a consistent manner.
+   * @param {object} response the fetch response (without any of the data methods invoked) 
+   * @param {string} url the full url used for the API call
+   * @param {object} fetchOpts the options used by node-fetch
+   */
+  async _handleNotOk(response, url, fetchOpts){
+    debug(`  ...Error. HTTP-${response.status}`);
+    
+    let result = null;
+    if (response.status >=300 & response.status < 400){
+      result = await response.json();
+
+    } else if (response.status >=400 & response.status < 500){
+      if(response.status === 401 || response.status === 403){
+        result = await response.json();
+        debug(result.error);
+        //Future use: these may be retried once after attempting to refresh the access token.
+        throw new ApiAuthError(JSON.stringify(result));
+      } else if(response.status === 404){
+        debug(`  not found.`);
+        return null;
+      }
+      //client errors
+      result = await response.json();
+      
+      verbose(`  client error. response payload: ${JSON.stringify(result)}`);
+      throw new ApiError(`Client error (HTTP-${response.status}). ${result.title} Error code: ${result['o:errorCode']}`);
+
+    } else if (response.status >=500) {
+      result = await response.text();
+      verbose(`  server error. response payload: ${JSON.stringify(result)}`);
+    
+    } else { 
+      throw err; //Cannot be handled.
+    }
+    return result;
+   
+  }
+
 
 }
 
 class AutotaskApiError extends Error {
-
 }
 
+exports.FilterOperators = {
+  /** Requires that the field value match the exact criteria provided */
+  eq: "eq",
+  /** Requires that the field value be anything other than the criteria provided */
+  noteq: "noteq",
+  /** Requires that the field value be greater than the criteria provided */
+  gt: "gt",
+  /** Requires that the field value be greater than or equal to the criteria provided */
+  gte: "gte",
+  /** Requires that the field value be less than the criteria provided */
+  lt: "lt",
+  /** Requires that the field value be less than or equal to the criteria provided */
+  lte: "lte",
+  /**	Requires that the field value begin with the defined criteria */
+  beginsWith: "beginsWith",
+  /** Requires that the field value end with the defined criteria */
+  endsWith: "endsWith",
+  /** Allows for the string provided as criteria to match any resource that contains the string in its value */
+  contains: "contains",
+  /**	Enter exist to query for fields in which the data you specify is not null. */
+  exist: "exist",
+  /** Enter notExist to query for fields in which the specified data is null */
+  notExist: "notExist",
+  /** With this value specified, the query will return only the values in the list array that match the field value you specify */
+  in: "in",
+  /** With this value specified, the query will only return the values in the list array that do not match the field value you specify */
+  notIn: "notIn",
+};
 exports.AutotaskRestApi = AutotaskRestApi;
 exports.AutotaskApiError = AutotaskApiError;
