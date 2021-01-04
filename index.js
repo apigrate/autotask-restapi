@@ -401,7 +401,7 @@ class AutotaskRestApi {
         verbose(`  received: ${JSON.stringify(result)}`);
         return result;
       } else {
-        result = await this._handleNotOk(response)
+        return await this._handleNotOk(response)
       }
     }catch(ex){
       if(ex instanceof AutotaskApiError){
