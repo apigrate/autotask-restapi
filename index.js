@@ -428,10 +428,10 @@ class AutotaskRestApi {
 
     } else if (response.status >=400 & response.status < 500){
       if(response.status === 401 || response.status === 403){
-        result = await response.json();
-        debug(result.error);
+        result = await response.text();
+        debug(result);
         //Future use: these may be retried once after attempting to refresh the access token.
-        throw new ApiAuthError(JSON.stringify(result));
+        throw new AutotaskApiError(result);
       } else if(response.status === 404){
         debug(`  not found.`);
         return null;
