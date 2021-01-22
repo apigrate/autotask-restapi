@@ -1,5 +1,5 @@
 /*
-  Copyright 2020 Apigrate LLC
+  Copyright 2020-2021 Apigrate LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -405,11 +405,12 @@ class AutotaskRestApi {
       }
     }catch(ex){
       if(ex instanceof AutotaskApiError){
-        throw ex;
+        //rethrow only
       } else {
+        //log
         console.error(ex);
       }
-      
+      throw ex;
     }
   }
 
@@ -440,12 +441,12 @@ class AutotaskRestApi {
       result = await response.json();
       
       verbose(`  client error. response payload: ${JSON.stringify(result)}`);
-      throw new ApiError(`Client error (HTTP-${response.status}). ${result.title} Error code: ${result['o:errorCode']}`);
+      throw new AutotaskApiError(`Client error (HTTP-${response.status}). ${result.title} Error code: ${result['o:errorCode']}`);
 
     } else if (response.status >=500) {
       result = await response.text();
-      verbose(`  server error. response payload: ${JSON.stringify(result)}`);
-    
+      verbose(`  server error. response payload: ${result}`);
+      throw new AutotaskApiError(`Server error (HTTP-${response.status}). ${result}`);
     } else { 
       throw err; //Cannot be handled.
     }
