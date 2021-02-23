@@ -263,7 +263,7 @@ class AutotaskRestApi {
           },
 
           delete : async (id)=>{
-            if(!toSave) throw new Error(`${missingIdErrorMessage}`);
+            if(!id) throw new Error(`${missingIdErrorMessage}`);
             return await this._delete(`/${entity.name}/${id}`);
           },
 
