@@ -38,8 +38,7 @@ class AutotaskRestApi {
     this.secret = secret;
     this.code = code;
     
-    //TODO: change entrypoint base url once released... 
-    this.base_url = `https://webservices2.autotask.net/ATServicesRest/`; //As returned by zoneInformation.url
+    this.base_url = `https://webservices.autotask.net/ATServicesRest/`; //As returned by zoneInformation.url
     this.version = '1.0';
     
     if(options){
