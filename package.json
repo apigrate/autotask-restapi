@@ -1,6 +1,6 @@
 {
   "name": "@apigrate/autotask-restapi",
-  "version": "0.3.5",
+  "version": "0.4.0",
   "description": "NodeJS library for the Autotask REST API.",
   "main": "index.js",
   "scripts": {

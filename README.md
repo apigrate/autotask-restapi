@@ -72,6 +72,18 @@ let product = await api.Products.get(232486923);
 
 [related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
 
+> Special case: To retrieve attachment base64-encoded data, you must use an attachment-specific parent-child GET request. For: 'ConfigurationItemAttachments', 'ConfigurationItemNoteAttachments', 'OpportunityAttachments', 'TaskAttachments', 'TaskNoteAttachments', 'TicketAttachments', 'TicketNoteAttachments', 'TimeEntryAttachments', you must use the following `get` syntax:
+
+Get a entity attachment data by id
+```javascript
+// TicketID 129873
+// AttachmentID 232486923
+let ticketAttachment = await api.TicketAttachments.get(129873, 232486923);
+
+// ticketAttachment = { items: { id: 232486923, ..., data: "iVBORw0KGgoAAAANSUhEUgAAAV8AAAC (...the rest of the base64 ecoded data)..." } }
+```
+
+
 ### query
 Query for entities matching a filter expression.
 ```javascript

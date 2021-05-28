@@ -83,10 +83,12 @@ class AutotaskRestApi {
       {name:'CompanyWebhookFields', childOf: 'CompanyWebhooks', subname: 'Fields'},
       {name:'CompanyWebhookUdfFields', childOf: 'CompanyWebhoosk', subname: 'UdfFields'},
       {name:'ConfigurationItems'},
+      {name:'ConfigurationItemAttachments', childOf: 'ConfigurationItem', subname: 'Attachments'},
       {name:'ConfigurationItemBillingProductAssociations', childOf: 'ConfigurationItems', subname: 'BillingProductAssociations'},
       {name:'ConfigurationItemCategories'},
       {name:'ConfigurationItemCategoryUdfAssociations', childOf: 'ConfigurationItemCategories', subname: 'UdfAssociations'},
       {name:'ConfigurationItemNotes', childOf: 'ConfigurationItems', subname: 'Notes'},
+      {name:'ConfigurationItemNoteAttachments', childOf: 'ConfigurationItemNotes', subname: 'Attachments'},
       {name:'ConfigurationItemTypes'},
       {name:'Contacts'},
       {name:'ContactBillingProductAssociations', childOf: 'Contacts', subname: 'BillingProductAssociationis'},
@@ -192,6 +194,7 @@ class AutotaskRestApi {
       {name:'Tasks', childOf: 'Projects', subname: 'Tasks'},
       {name:'TaskAttachments', childOf: 'Tasks', subname: 'Attachments'},
       {name:'TaskNotes', childOf: 'Tasks', subname: 'Notes'},
+      {name:'TaskNoteAttachments', childOf: 'TaskNotes', subname: 'Attachments'},
       {name:'TaskPredecessors', childOf: 'Tasks', subname: 'Predecessors'},
       {name:'TaskSecondaryResources', childOf: 'Tasks', subname: 'SecondaryResources'},
       {name:'Taxes'},
@@ -210,9 +213,11 @@ class AutotaskRestApi {
       {name:'TicketChecklistLibraries', childOf: 'Tickets', subname: 'ChecklistLibraries'},
       {name:'TicketHistory'},
       {name:'TicketNotes', childOf: 'Tickets', subname: 'Notes'},
+      {name:'TicketNoteAttachments', childOf: 'TicketNotes', subname: 'Attachments'},
       {name:'TicketRmaCredits', childOf: 'Tickets', subname: 'RmaCredits'},
       {name:'TicketSecondaryResources', childOf: 'Tickets', subname: 'SecondaryResources'},
       {name:'TimeEntries'},
+      {name:'TimeEntryAttachments', childOf: 'TimeEntries', subname: 'Attachments'},
       {name:'UserDefinedFieldDefinitions'},
       {name:'UserDefinedFieldListItems', childOf: 'UserDefinedFields', subname: 'ListItems'},//note, no parent native entity
       {name:'WebhookEventErrorLogs'},
@@ -287,9 +292,30 @@ class AutotaskRestApi {
 
         //Adjust endpoints for child entities.
         if(entity.childOf){
-          let missingParentIdErrorMsg = `${entity.name} are children of ${entity.childOf}. Please provide the id of the ${entity.childOf} entity as the first parameter.`;
+          let missingParentIdErrorMsg = `${entity.name} are children of ${entity.childOf}. Please provide the id of the ${entity.childOf} entity as the first parameter. It must be an integer.`;
           let missingEntityErrorMsg = `No ${entity.subname} was provided. Please provide the ${entity.subname} data as the second parameter.`;
-          let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id as the second parameter.`;
+          let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id as the second parameter. It must be an integer.`;
+
+          // Attachment child entities require special handling...
+          if([
+            'ConfigurationItemAttachments',
+            'ConfigurationItemNoteAttachments',
+            'OpportunityAttachments',
+            'TaskAttachments',
+            'TaskNoteAttachments',
+            'TicketAttachments',
+            'TicketNoteAttachments',
+            'TimeEntryAttachments'
+          ].includes(entity.name)){
+            this.connector[entity.name].get = async (parentId, id)=>{
+              if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+              if(id === null || typeof id === 'undefined' ) throw new Error(`${missingIdErrorMessage}`);
+              //This is the only attachment endpoint that returns the base64 encoded data. Other approaches yield `null` for the `data` property
+              return await this._get(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
+            };
+          }
+
+
           //create, update, replace, and delete have different signatures
           this.connector[entity.name].update = async (parentId, toSave)=>{
             if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
