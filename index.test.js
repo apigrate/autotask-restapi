@@ -51,6 +51,7 @@ test('can create an entity', async () => {
   let contact = {
     companyID: 0,
     firstName: "Tester",
+    middleInitial: "Xavier",
     lastName: "Testington",
     isActive: 0,
   };
@@ -75,8 +76,31 @@ test('can update an entity', async () => {
   expect(contactAfterUpdate).toBeDefined();
   expect(contactAfterUpdate.id).toBe(contactIdCreated);
   expect(contactAfterUpdate.firstName).toMatch(/Ingrid/);
+  expect(contactAfterUpdate.middleInitial).toMatch(/Xavier/);
   expect(contactAfterUpdate.lastName).toMatch(/Testington/);
 });
+
+test('can replace an entity', async () => {
+  let contactUpdate = {
+    id: contactIdCreated,
+    title: "Commander",
+    firstName: "William",
+    lastName: "Adama",
+    isActive: 1,
+  };
+  let result = await api.CompanyContacts.replace(0, contactUpdate); 
+  // console.log('update result: %o', result);
+  expect(result).toBeDefined();
+  let {item: contactAfterUpdate} = await api.Contacts.get(contactIdCreated);
+  expect(contactAfterUpdate).toBeDefined();
+  expect(contactAfterUpdate.id).toBe(contactIdCreated);
+  expect(contactAfterUpdate.title).toMatch(/Commander/);
+  expect(contactAfterUpdate.firstName).toMatch(/William/);
+  expect(contactAfterUpdate.lastName).toMatch(/Adama/);
+  expect(contactAfterUpdate.middleInitial).toBe(null);
+  expect(contactAfterUpdate.isActive).toBe(1);
+});
+
 
 test('can delete an entity', async () => {
  
