@@ -451,7 +451,7 @@ The REST API introduces a parent-child relationship among some Autotask entities
 * ContractRetainers &rarr; Contracts/Retainers
 * ContractRoleCosts &rarr; Contracts/RoleCosts
 * ContractServices &rarr; Contracts/Services
-* ContractServiceAdjustments &rarr; Contracts/undefined
+* ContractServiceAdjustments &rarr; Contracts/ServiceAdjustments
 * ContractServiceBundles &rarr; Contracts/ServiceBundles
 * ContractServiceBundleAdjustments &rarr; Contracts/ServiceBundleAdjustments
 * ContractServiceBundleUnits &rarr; Contracts/ServiceBundleUnits

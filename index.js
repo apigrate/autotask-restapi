@@ -114,7 +114,7 @@ class AutotaskRestApi {
       {name:'ContractRetainers', childOf: 'Contracts', subname: 'Retainers'},
       {name:'ContractRoleCosts', childOf: 'Contracts', subname: 'RoleCosts'},
       {name:'ContractServices', childOf: 'Contracts', subname: 'Services'},
-      {name:'ContractServiceAdjustments', childOf: 'Contracts'},
+      {name:'ContractServiceAdjustments', childOf: 'Contracts', subname: 'ServiceAdjustments'},
       {name:'ContractServiceBundles', childOf: 'Contracts', subname: 'ServiceBundles'},
       {name:'ContractServiceBundleAdjustments', childOf: 'Contracts', subname: 'ServiceBundleAdjustments'},
       {name:'ContractServiceBundleUnits', childOf: 'Contracts', subname: 'ServiceBundleUnits'},
