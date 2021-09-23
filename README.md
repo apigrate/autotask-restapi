@@ -59,7 +59,7 @@ result = await api.Contacts.count({
 });
 // result = {queryCount: 1209}
 ```
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
 
 ### get
 Get a single entity by id.
@@ -70,7 +70,7 @@ let product = await api.Products.get(232486923);
 
 > Note, filter expressions using the `get` method are not supported. Use the `query` method instead.
 
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
 
 > Special case: To retrieve attachment base64-encoded data, you must use an attachment-specific parent-child GET request. For: 'ConfigurationItemAttachments', 'ConfigurationItemNoteAttachments', 'OpportunityAttachments', 'TaskAttachments', 'TaskNoteAttachments', 'TicketAttachments', 'TicketNoteAttachments', 'TimeEntryAttachments', you must use the following `get` syntax:
 
@@ -109,53 +109,7 @@ Query results take the following form (example shows the Company returned from t
       "address1": null,
       "address2": null,
       "alternatePhone1": "",
-      "alternatePhone2": "",
-      "apiVendorID": null,
-      "assetValue": null,
-      "billToCompanyLocationID": null,
-      "billToAdditionalAddressInformation": "",
-      "billingAddress1": "",
-      "billingAddress2": "",
-      "billToAddressToUse": 1,
-      "billToAttention": "",
-      "billToCity": "",
-      "billToCountryID": null,
-      "billToState": "",
-      "billToZipCode": "",
-      "city": "",
-      "classification": null,
-      "companyName": "Sirius Cybernetics Corporation",
-      "companyNumber": "",
-      "companyType": 1,
-      "competitorID": null,
-      "countryID": null,
-      "createDate": "2016-03-30T13:10:35.563",
-      "createdByResourceID": 29682885,
-      "currencyID": 1,
-      "fax": "",
-      "impersonatorCreatorResourceID": null,
-      "invoiceEmailMessageID": 1,
-      "invoiceMethod": null,
-      "invoiceNonContractItemsToParentCompany": null,
-      "invoiceTemplateID": 102,
-      "isActive": true,
-      "isClientPortalActive": true,
-      "isEnabledForComanaged": false,
-      "isTaskFireActive": false,
-      "isTaxExempt": false,
-      "lastActivityDate": "2018-11-13T17:32:34",
-      "lastTrackedModifiedDateTime": "2016-03-30T13:10:35.563",
-      "marketSegmentID": null,
-      "ownerResourceID": 29682885,
-      "parentCompanyID": null,
-      "phone": "555-111-1111",
-      "postalCode": "",
-      "quoteEmailMessageID": 1,
-      "quoteTemplateID": 1,
-      "sicCode": "",
-      "state": "",
-      "stockMarket": "",
-      "stockSymbol": "",
+      ...
       "surveyCompanyRating": null,
       "taxID": "",
       "taxRegionID": null,
@@ -234,7 +188,7 @@ result = await api.Companies.query({
 });
 ```
 
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Advanced_Query_Features.htm)
 
 ### create
 Creates an entity.
@@ -256,7 +210,7 @@ result = await api.Companies.create(myCompany);
 }
 ```
 
-> Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
+> Note some entities in the Autotask REST API are child entities of other entities. This does NOT affect how you **query or retrieve them**, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
 
 To illustrate the **child record** relationship, the following example will create a **ToDo** for a **Company** using the **CompanyToDos** api.
 ```javascript
@@ -278,34 +232,35 @@ It yields the `result`:
 }
 ```
 
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Creating_Resources.htm)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Creating_Resources.htm)
 
 ### update
 Updates an entity. This updates **ONLY the fields you specify**, leaving other fields on it unchanged.
 
 > Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
-
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Updating_Data_PATCH.htm)
+                                 
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Updating_Data_PATCH.htm)
 
 ### replace
 Replaces an entity. This replaces **the entire entity**, obliterating its prior contents (except for readonly fields) and replacing it with the data you provide.
 
 > Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
 
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Updating_Data_PUT.htm)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Updating_Data_PUT.htm)
 
 ### delete
 Deletes an entity by id.
 
 > Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
 
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Delete_Operation.htm)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Delete_Operation.htm)
 
 ### info
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Resource_Child_Access_URLs.htm#Entity)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_EntityInformationCall.htm)
 
 ### fieldInfo
 Get metadata about a given entity's fields. This includes information about the data type; whether the field is required, read-only etc; and any valid-values that should be used.
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_EntityInformationCall.htm)
 
 ```javascript
 result = await api.AccountToDo.fieldInfo();
@@ -345,42 +300,7 @@ This will yield a `result`:
           "isActive": true,
           "isSystem": true
         },
-        {
-          "value": "2",
-          "label": "Meeting",
-          "isDefaultValue": false,
-          "sortOrder": 0,
-          "parentValue": "",
-          "isActive": true,
-          "isSystem": true
-        },
-        {
-          "value": "3",
-          "label": "General",
-          "isDefaultValue": false,
-          "sortOrder": 0,
-          "parentValue": "",
-          "isActive": true,
-          "isSystem": true
-        },
-        {
-          "value": "5",
-          "label": "Quick Note",
-          "isDefaultValue": false,
-          "sortOrder": 0,
-          "parentValue": "",
-          "isActive": true,
-          "isSystem": true
-        },
-        {
-          "value": "29682776",
-          "label": "Email",
-          "isDefaultValue": false,
-          "sortOrder": 0,
-          "parentValue": "",
-          "isActive": true,
-          "isSystem": false
-        }
+        ...
       ],
       "picklistParentValueField": "",
       "isSupportedWebhookField": false
@@ -399,301 +319,62 @@ This will yield a `result`:
       "picklistParentValueField": "",
       "isSupportedWebhookField": false
     },
-    {
-      "name": "AssignedToResourceID",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": true,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Resource",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "CompanyID",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": true,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Company",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "CompletedDate",
-      "dataType": "datetime",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": false,
-      "referenceEntityType": "",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "ContactID",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Contact",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "ContractID",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Contract",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "CreateDateTime",
-      "dataType": "datetime",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": true,
-      "isQueryable": true,
-      "isReference": false,
-      "referenceEntityType": "",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "CreatorResourceID",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": true,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Resource",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "EndDateTime",
-      "dataType": "datetime",
-      "length": 0,
-      "isRequired": true,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": false,
-      "referenceEntityType": "",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "Id",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": true,
-      "isReadOnly": true,
-      "isQueryable": true,
-      "isReference": false,
-      "referenceEntityType": "",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "ImpersonatorCreatorResourceID",
-      "dataType": "integer",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": true,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Resource",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "LastModifiedDate",
-      "dataType": "datetime",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": true,
-      "isQueryable": true,
-      "isReference": false,
-      "referenceEntityType": "",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "OpportunityID",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Opportunity",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "StartDateTime",
-      "dataType": "datetime",
-      "length": 0,
-      "isRequired": true,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": false,
-      "referenceEntityType": "",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    },
-    {
-      "name": "TicketID",
-      "dataType": "long",
-      "length": 0,
-      "isRequired": false,
-      "isReadOnly": false,
-      "isQueryable": true,
-      "isReference": true,
-      "referenceEntityType": "Ticket",
-      "isPickList": false,
-      "picklistValues": null,
-      "picklistParentValueField": "",
-      "isSupportedWebhookField": false
-    }
+    ...
+    
   ]
 }
 ```
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Resource_Child_Access_URLs.htm#Entity)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_EntityInformationCall.htm)
 
 ### udfInfo
-[related Autotask documentation](https://ww2.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/API_Calls/REST_Resource_Child_Access_URLs.htm#Entity)
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/Entities/UserdefinedFieldsUDFs.htm)
 
 ## Available Entities
 
-The following is a list of all Autotask entities supported by the connector.
-
-* zoneInformation
+The following is a list of all Autotask entities supported by the connector:
 * ActionTypes
 * AdditionalInvoiceFieldValues
 * Appointments
 * AttachmentInfo
 * ProjectCharges
+* BillingCodes
 * BillingItems
 * BillingItemApprovalLevels
 * ChangeOrderCharges
 * ChangeRequestLinks
 * ChecklistLibraries
-* ChecklistLibraryChecklistItems
 * ClassificationIcons
 * ClientPortalUsers
 * ComanagedAssociations
 * Companies
-* CompanyAlerts
-* CompanyAttachments
-* CompanyLocations
-* CompanyNotes
-* CompanySiteConfigurations
-* CompanyTeams
-* CompanyToDos
-* CompanyWebhook
-* CompanyWebhookExcludedResource
-* CompanyWebhookField
-* CompanyWebhookUdfField
+* CompanyWebhooks
 * ConfigurationItems
-* ConfigurationItemBillingProductAssociations
 * ConfigurationItemCategories
-* ConfigurationItemCategoryUdfAssociations
-* ConfigurationItemNotes
 * ConfigurationItemTypes
 * Contacts
-* ContractBillingProductAssociations
 * ContactGroups
-* ContactGroupContacts
-* ContactWebhook
-* ContactWebhookExcludedResource
-* ContactWebhookField
-* ContactWebhookUdfField
+* ContactWebhooks
 * Contracts
-* ContractBillingRules
-* ContractBlocks
-* ContractBlockHourFactors
-* ContractCharges
-* ContactExclusionBillingCodes
-* ContractExclusionRoles
 * ContractExclusionSets
-* ContractExclusionSetExcludedRoles
-* ContractExclusionSetExcludedWorkTypes
-* ContractMilestones
-* ContractNotes
-* ContractRates
-* ContractRetainers
-* ContractRoleCosts
-* ContractServices
-* ContractServiceAdjustments
-* ContractServiceBundles
-* ContractServiceBundleAdjustments
-* ContractServiceBundleUnits
-* ContractServiceUnits
-* ContractTicketPurchases
 * Countries
 * Currencies
 * Departments
-* ExpenseItems
+* Expenses
 * ExpenseReports
-* Holidays
 * HolidaySets
 * InternalLocations
 * InternalLocationWithBusinessHours
 * InventoryItems
-* InventoryItemSerialNumbers
 * InventoryLocations
 * InventoryTransfers
 * Invoices
 * InvoiceTemplates
 * NotificationHistory
 * Opportunities
-* OpportunityAttachments
 * OrganizationalLevel1
 * OrganizationalLevel2
 * OrganizationalLevelAssociations
-* OrganizatonalResources
 * PaymentTerms
-* Phases
 * PriceListMaterialCodes
 * PriceListProducts
 * PriceListProductTiers
@@ -702,70 +383,127 @@ The following is a list of all Autotask entities supported by the connector.
 * PriceListServiceBundles
 * PriceListWorkTypeModifiers
 * Products
-* ProductNotes
-* ProductTiers
-* ProductVendors
 * Projects
-* ProjectAttachments
-* ProjectNotes
 * PurchaseApprovals
 * PurchaseOrders
-* PurchaseOrderItems
-* PurchaseOrderItemReceiving
 * Quotes
-* QuoteItems
 * QuoteLocations
 * QuoteTemplates
 * Resources
 * ResourceRoles
-* ResourceRoleDepartments
-* ResourceRoleQueues
-* ResourceServiceDeskRoles
-* ResourceSkills
 * Roles
-* SalesOrders
 * Services
 * ServiceBundles
-* ServiceBundleServices
 * ServiceCalls
-* ServiceCallTasks
-* ServiceCallTaskResource
-* ServiceCallTickets
-* ServiceCallTicketResource
-* ServiceLevelAgreementResults
 * ShippingTypes
 * Skills
 * Subscriptions
-* SubscriptionPeriods
 * Surveys
 * SurveyResults
-* Tasks
-* TaskAttachments
-* TaskNotes
-* TaskPredecessors
-* TaskSecondaryResources
 * Taxes
 * TaxCategories
 * TaxRegions
+* ThresholdInformation
 * Tickets
-* TicketAdditionalConfigurationItems
-* TicketAdditionalContacts
-* TicketAttachments
 * TicketCategories
-* TicketCategoryFieldDefaults
-* TicketChangeRequestApprovals
-* TicketCharges
-* TicketChecklistItems
-* TicketChecklistLibraries
 * TicketHistory
-* TicketNotes
-* TicketRmaCredits
-* TicketSecondaryResources
 * TimeEntries
 * UserDefinedFieldDefinitions
-* UserDefinedFieldListItems
-* WebhookEventErrorLog
+* WebhookEventErrorLogs
 * WorkTypeModifiers
+* ZoneInformation
+
+The REST API introduces a parent-child relationship among some Autotask entities. The connector uses a shorthand name to make working with the entities more intuitive. The following child-entities are also supported by the connector:
+
+* ChecklistLibraryChecklistItems &rarr; ChecklistLibraries/ChecklistItems
+* CompanyAlerts &rarr; Companies/Alerts
+* CompanyAttachments &rarr; Companies/Attachments
+* CompanyContacts &rarr; Companies/Contacts
+* CompanyLocations &rarr; Companies/Locations
+* CompanyNotes &rarr; Companies/Notes
+* CompanySiteConfigurations &rarr; Companies/SiteConfigurations
+* CompanyTeams &rarr; Companies/Teams
+* CompanyToDos &rarr; Companies/ToDos
+* CompanyWebhookExcludedResources &rarr; CompanyWebhooks/ExcludedResources
+* CompanyWebhookFields &rarr; CompanyWebhooks/Fields
+* CompanyWebhookUdfFields &rarr; CompanyWebhoosk/UdfFields
+* ConfigurationItemAttachments &rarr; ConfigurationItem/Attachments
+* ConfigurationItemBillingProductAssociations &rarr; ConfigurationItems/BillingProductAssociations
+* ConfigurationItemCategoryUdfAssociations &rarr; ConfigurationItemCategories/UdfAssociations
+* ConfigurationItemNotes &rarr; ConfigurationItems/Notes
+* ConfigurationItemNoteAttachments &rarr; ConfigurationItemNotes/Attachments
+* ContactBillingProductAssociations &rarr; Contacts/BillingProductAssociationis
+* ContactGroupContacts &rarr; ContactGroups/Contacts
+* ContactWebhookExcludedResources &rarr; ContactWebhooks/ExcludedResources
+* ContactWebhookFields &rarr; ContactWebhooks/Fields
+* ContactWebhookUdfFields &rarr; ContactWebhooks/UdfFields
+* ContractBillingRules &rarr; Contracts/BillingRules
+* ContractBlocks &rarr; Contracts/Blocks
+* ContractBlockHourFactors &rarr; Contracts/BlockHourFactors
+* ContractCharges &rarr; Contracts/Charges
+* ContractExclusionBillingCodes &rarr; Contracts/ExclusionBillingCodes
+* ContractExclusionRoles &rarr; Contracts/ExclusionRoles
+* ContractExclusionSetExcludedRoles &rarr; ContractExclusionSets/ExcludedRoles
+* ContractExclusionSetExcludedWorkTypes &rarr; ContractExclusionSets/ExcludedWorkTypes
+* ContractMilestones &rarr; Contracts/Milestones
+* ContractNotes &rarr; Contracts/Notes
+* ContractRates &rarr; Contracts/Rates
+* ContractRetainers &rarr; Contracts/Retainers
+* ContractRoleCosts &rarr; Contracts/RoleCosts
+* ContractServices &rarr; Contracts/Services
+* ContractServiceAdjustments &rarr; Contracts/undefined
+* ContractServiceBundles &rarr; Contracts/ServiceBundles
+* ContractServiceBundleAdjustments &rarr; Contracts/ServiceBundleAdjustments
+* ContractServiceBundleUnits &rarr; Contracts/ServiceBundleUnits
+* ContractServiceUnits &rarr; Contracts/ServiceUnits
+* ContractTicketPurchases &rarr; Contracts/TicketPurchases
+* ExpenseItems &rarr; Expenses/Items
+* Holidays &rarr; HolidaySets/Holidays
+* InventoryItemSerialNumbers &rarr; InventoryItems/SerialNumbers
+* OpportunityAttachments &rarr; Opportunities/Attachments
+* OrganizatonalResources &rarr; OrganizationalLevelAssociations/Resources
+* Phases &rarr; Projects/Phases
+* ProductNotes &rarr; Products/Notes
+* ProductTiers &rarr; Products/Tiers
+* ProductVendors &rarr; Products/Vendors
+* ProjectAttachments &rarr; Projects/Attachments
+* ProjectCharges &rarr; Projects/Charges
+* ProjectNotes &rarr; Projects/Notes
+* PurchaseOrderItems &rarr; PurchaseOrders/Items
+* PurchaseOrderItemReceiving &rarr; PurchaseOrderItems/Receiving
+* QuoteItems &rarr; Quotes/Items
+* ResourceRoleDepartments &rarr; Resources/RoleDepartments
+* ResourceRoleQueues &rarr; Resources/RoleQueues
+* ResourceServiceDeskRoles &rarr; Resources/ServiceDeskRoles
+* ResourceSkills &rarr; Resources/Skills
+* SalesOrders &rarr; Opportunities/SalesOrders
+* ServiceBundleServices &rarr; ServiceBundles/Services
+* ServiceCallTasks &rarr; ServiceCalls/Tasks
+* ServiceCallTaskResource &rarr; ServiceCallTasks/Resources
+* ServiceCallTickets &rarr; ServiceCalls/Tickets
+* ServiceCallTicketResource &rarr; ServiceCallTickets/Resources
+* ServiceLevelAgreementResults &rarr; ServiceLevelAgreements/Results
+* SubscriptionPeriods &rarr; Subscriptions/Periods
+* Tasks &rarr; Projects/Tasks
+* TaskAttachments &rarr; Tasks/Attachments
+* TaskNotes &rarr; Tasks/Notes
+* TaskNoteAttachments &rarr; TaskNotes/Attachments
+* TaskPredecessors &rarr; Tasks/Predecessors
+* TaskSecondaryResources &rarr; Tasks/SecondaryResources
+* TicketAdditionalConfigurationItems &rarr; Tickets/AdditionalConfigurationItems
+* TicketAdditionalContacts &rarr; Tickets/AdditionalContacts
+* TicketAttachments &rarr; Tickets/Attachments
+* TicketCategoryFieldDefaults &rarr; TicketCategories/FieldDefaults
+* TicketChangeRequestApprovals &rarr; Tickets/ChangeRequestApprovals
+* TicketCharges &rarr; Tickets/Charges
+* TicketChecklistItems &rarr; Tickets/ChecklistItems
+* TicketChecklistLibraries &rarr; Tickets/ChecklistLibraries
+* TicketNotes &rarr; Tickets/Notes
+* TicketNoteAttachments &rarr; TicketNotes/Attachments
+* TicketRmaCredits &rarr; Tickets/RmaCredits
+* TicketSecondaryResources &rarr; Tickets/SecondaryResources
+* TimeEntryAttachments &rarr; TimeEntries/Attachments
+* UserDefinedFieldListItems &rarr; UserDefinedFields/ListItems
 
 ## Debugging
 

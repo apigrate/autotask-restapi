@@ -357,7 +357,7 @@ class AutotaskRestApi {
    * let api = await autotask.api();
    * api.Companies.get(0);
    * api.Tickets.query( myTicketQuery );
-   * api.Contacts.create( myContact );
+   * api.CompanyContacts.create(0, myContact );
    */
   async api(){
     if(!this.zoneInfo){

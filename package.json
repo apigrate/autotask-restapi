@@ -1,10 +1,10 @@
 {
   "name": "@apigrate/autotask-restapi",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "NodeJS library for the Autotask REST API.",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest index.test.js --detectOpenHandles"
   },
   "repository": {
     "type": "git",
@@ -23,8 +23,8 @@
   },
   "homepage": "https://github.com/apigrate/autotask-restapi#readme",
   "dependencies": {
-    "debug": "^4.1.1",
-    "node-fetch": "^2.6.0",
+    "debug": "^4.3.2",
+    "node-fetch": "^2.6.5",
     "query-string": "^6.12.1"
   },
   "devDependencies": {
