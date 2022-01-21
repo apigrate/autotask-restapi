@@ -224,8 +224,10 @@ To illustrate the **child record** relationship, the following example will crea
 };
 result = await api.CompanyToDos.create(0, myToDo);
 ```
+
 Note the use of the parent id (company id = 0) as the first argument of the `create` method. The parent id is required as the first parameter of the method.
 It yields the `result`:
+
 ```json
 {
   "itemId": 29684378
@@ -236,6 +238,28 @@ It yields the `result`:
 
 ### update
 Updates an entity. This updates **ONLY the fields you specify**, leaving other fields on it unchanged.
+
+The following example updates  a **Company** phone number.
+```javascript
+
+let updateResult = await api.Company.update({"id":45701237, phone: "1112223344"});
+
+```
+
+As mentioned in the create() documentation above, **child record relationships** require a slight change in syntax when invoking updates on sub-entities. 
+Here is another example of the **child record relationship**, using the Contacts entity. Since Contacts are children of Companies, we must also provide the CompanyID of the
+Contact before we can update it.
+
+```javascript
+// Here we are using the api.Contacts handle. Queries don't require knowledge of parent-child structure.
+let queryResult = await api.Contacts.query({filter:[{field:'firstName', op:FilterOperators.eq, value:'Zaphod'}]});
+
+let companyID = queryResult.items[0].companyID;
+
+// However, here we are using the api.CompanyContacts handle because of the structure required by the Autotask REST API. The parent entity is provided as the first argument of the update.
+let updateResult = await api.CompanyContacts.update(companyID, {"id":30684047, middleName: "Hortensius"});
+```
+
 
 > Note some entities in the Autotask REST API are child entities of other entities. This doesn't affect how you query or retrieve them, but it does require you to provide the parent entity id when using the `create()`, `update()`, `replace()`, or `delete()` methods.
                                  
