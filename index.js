@@ -256,14 +256,14 @@ class AutotaskRestApi {
             return await this._get(`/${entity.name}/${id}`);
           },
 
-          update : async (toSave)=>{
+          update : async (toSave, opts)=>{
             if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._patch(`/${entity.name}`, toSave);
+            return await this._patch(`/${entity.name}`, toSave, opts);
           },
 
-          create : async (toSave)=>{
+          create : async (toSave, opts)=>{
             if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._post(`/${entity.name}`, toSave);
+            return await this._post(`/${entity.name}`, toSave, opts);
           },
 
           delete : async (id)=>{
@@ -272,9 +272,9 @@ class AutotaskRestApi {
           },
 
           //missing properties set to null!
-          replace : async (toSave)=>{
+          replace : async (toSave, opts)=>{
             if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._put(`/${entity.name}`, toSave);
+            return await this._put(`/${entity.name}`, toSave, opts);
           },
 
           info: async ()=>{
@@ -317,16 +317,16 @@ class AutotaskRestApi {
 
 
           //create, update, replace, and delete have different signatures
-          this.connector[entity.name].update = async (parentId, toSave)=>{
+          this.connector[entity.name].update = async (parentId, toSave, opts)=>{
             if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
             if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._patch(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave);
+            return await this._patch(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
           };
 
-          this.connector[entity.name].create = async (parentId, toSave)=>{
+          this.connector[entity.name].create = async (parentId, toSave, opts)=>{
             if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
             if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._post(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave);
+            return await this._post(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
           };
 
           this.connector[entity.name].delete = async (parentId, id)=>{
@@ -335,10 +335,10 @@ class AutotaskRestApi {
             return await this._delete(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
           };
 
-          this.connector[entity.name].replace = async (parentId, toSave)=>{
+          this.connector[entity.name].replace = async (parentId, toSave, opts)=>{
             if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
             if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._put(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave);
+            return await this._put(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
           };
         }
 
@@ -375,16 +375,16 @@ class AutotaskRestApi {
     return await this._fetch('DELETE', endpoint, query);
   }
   /** sparse update an entity */
-  async _patch(endpoint, payload){
-    return await this._fetch('PATCH', endpoint, null, payload);
+  async _patch(endpoint, payload, opts){
+    return await this._fetch('PATCH', endpoint, null, payload, opts);
   }
   /** full update an entity */
-  async _put(endpoint, payload){
-    return await this._fetch('PUT', endpoint, null, payload);
+  async _put(endpoint, payload, opts){
+    return await this._fetch('PUT', endpoint, null, payload, opts);
   }
   /** create an entity */
-  async _post(endpoint, payload){
-    return await this._fetch('POST', endpoint, null, payload);
+  async _post(endpoint, payload, opts){
+    return await this._fetch('POST', endpoint, null, payload, opts);
   }
 
   /**
@@ -394,7 +394,8 @@ class AutotaskRestApi {
    * @param {object} query hash of query parameters, if applicable
    * @param {object} payload to be converted to JSON, if provided 
    * @param {object} opts additional options (typically omitted)
-   * @param {boolean} omit_credentials omits the credentials on the request.
+   * @param {boolean} opts.omit_credentials omits the credentials on the request.
+   * @param {boolean} opts.ImpersonationResourceId specifies an Autotask Resource ID to impersonate on a create/update operation
    */
   async _fetch(method, endpoint, query, payload, opts){
     try{
@@ -410,6 +411,9 @@ class AutotaskRestApi {
         fetchParms.headers.ApiIntegrationcode = this.code;
         fetchParms.headers.UserName = this.user;
         fetchParms.headers.Secret = this.secret;
+      }
+      if(opts && opts.ImpersonationResourceId){
+        fetchParms.headers.ImpersonationResourceId = opts.ImpersonationResourceId;
       }
       if(payload) fetchParms.body = JSON.stringify(payload)
       let querystring = query ? '?'+qs.stringify(query) : '';
