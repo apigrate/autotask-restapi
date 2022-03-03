@@ -1,5 +1,5 @@
 /*
-  Copyright 2020 Apigrate LLC
+  Copyright 2020-2021 Apigrate LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -38,8 +38,7 @@ class AutotaskRestApi {
     this.secret = secret;
     this.code = code;
     
-    //TODO: change entrypoint base url once released... 
-    this.base_url = `https://webservices2.autotask.net/ATServicesRest/`; //As returned by zoneInformation.url
+    this.base_url = `https://webservices.autotask.net/ATServicesRest/`; //As returned by zoneInformation.url
     this.version = '1.0';
     
     if(options){
@@ -60,87 +59,92 @@ class AutotaskRestApi {
       {name:'Appointments'},
       {name:'AttachmentInfo'},
       {name:'ProjectCharges'},
+      {name:'BillingCodes'},
       {name:'BillingItems'},
       {name:'BillingItemApprovalLevels'},
       {name:'ChangeOrderCharges'},
       {name:'ChangeRequestLinks'},
       {name:'ChecklistLibraries'},
-      {name:'ChecklistLibraryChecklistItems'},
+      {name:'ChecklistLibraryChecklistItems', childOf: 'ChecklistLibraries', subname: 'ChecklistItems'},
       {name:'ClassificationIcons'},
       {name:'ClientPortalUsers'},
       {name:'ComanagedAssociations'},
       {name:'Companies'},
-      {name:'CompanyAlerts'},
-      {name:'CompanyAttachments'},
-      {name:'CompanyLocations'},
-      {name:'CompanyNotes'},
-      {name:'CompanySiteConfigurations'},
-      {name:'CompanyTeams'},
-      {name:'CompanyToDos'},
-      {name:'CompanyWebhook'},
-      {name:'CompanyWebhookExcludedResource'},
-      {name:'CompanyWebhookField'},
-      {name:'CompanyWebhookUdfField'},
+      {name:'CompanyAlerts', childOf: 'Companies', subname: 'Alerts'},
+      {name:'CompanyAttachments', childOf: 'Companies', subname: 'Attachments'},
+      {name:'CompanyContacts', childOf: 'Companies', subname: 'Contacts'},
+      {name:'CompanyLocations', childOf: 'Companies', subname: 'Locations'},
+      {name:'CompanyNotes', childOf: 'Companies', subname: 'Notes'},
+      {name:'CompanySiteConfigurations', childOf: 'Companies', subname: 'SiteConfigurations'},
+      {name:'CompanyTeams', childOf: 'Companies', subname: 'Teams'},
+      {name:'CompanyToDos', childOf: 'Companies', subname: 'ToDos'},
+      {name:'CompanyWebhooks'},
+      {name:'CompanyWebhookExcludedResources', childOf: 'CompanyWebhooks', subname: 'ExcludedResources'},
+      {name:'CompanyWebhookFields', childOf: 'CompanyWebhooks', subname: 'Fields'},
+      {name:'CompanyWebhookUdfFields', childOf: 'CompanyWebhoosk', subname: 'UdfFields'},
       {name:'ConfigurationItems'},
-      {name:'ConfigurationItemBillingProductAssociations'},
+      {name:'ConfigurationItemAttachments', childOf: 'ConfigurationItem', subname: 'Attachments'},
+      {name:'ConfigurationItemBillingProductAssociations', childOf: 'ConfigurationItems', subname: 'BillingProductAssociations'},
       {name:'ConfigurationItemCategories'},
-      {name:'ConfigurationItemCategoryUdfAssociations'},
-      {name:'ConfigurationItemNotes'},
+      {name:'ConfigurationItemCategoryUdfAssociations', childOf: 'ConfigurationItemCategories', subname: 'UdfAssociations'},
+      {name:'ConfigurationItemNotes', childOf: 'ConfigurationItems', subname: 'Notes'},
+      {name:'ConfigurationItemNoteAttachments', childOf: 'ConfigurationItemNotes', subname: 'Attachments'},
       {name:'ConfigurationItemTypes'},
       {name:'Contacts'},
-      {name:'ContractBillingProductAssociations'},
+      {name:'ContactBillingProductAssociations', childOf: 'Contacts', subname: 'BillingProductAssociationis'},
       {name:'ContactGroups'},
-      {name:'ContactGroupContacts'},
-      {name:'ContactWebhook'},
-      {name:'ContactWebhookExcludedResource'},
-      {name:'ContactWebhookField'},
-      {name:'ContactWebhookUdfField'},
+      {name:'ContactGroupContacts', childOf: 'ContactGroups', subname: 'Contacts'},
+      {name:'ContactWebhooks'},
+      {name:'ContactWebhookExcludedResources', childOf: 'ContactWebhooks', subname: 'ExcludedResources'},
+      {name:'ContactWebhookFields', childOf: 'ContactWebhooks', subname: 'Fields'},
+      {name:'ContactWebhookUdfFields', childOf: 'ContactWebhooks', subname: 'UdfFields'},
       {name:'Contracts'},
-      {name:'ContractBillingRules'},
-      {name:'ContractBlocks'},
-      {name:'ContractBlockHourFactors'},
-      {name:'ContractCharges'},
-      {name:'ContactExclusionBillingCodes'},
-      {name:'ContractExclusionRoles'},
+      {name:'ContractBillingRules', childOf: 'Contracts', subname: 'BillingRules'},
+      {name:'ContractBlocks', childOf: 'Contracts', subname: 'Blocks'},
+      {name:'ContractBlockHourFactors', childOf: 'Contracts', subname: 'BlockHourFactors'},
+      {name:'ContractCharges', childOf: 'Contracts', subname: 'Charges'},
+      {name:'ContractExclusionBillingCodes', childOf: 'Contracts', subname: 'ExclusionBillingCodes'},
+      {name:'ContractExclusionRoles', childOf: 'Contracts', subname: 'ExclusionRoles'},
       {name:'ContractExclusionSets'},
-      {name:'ContractExclusionSetExcludedRoles'},
-      {name:'ContractExclusionSetExcludedWorkTypes'},
-      {name:'ContractMilestones'},
-      {name:'ContractNotes'},
-      {name:'ContractRates'},
-      {name:'ContractRetainers'},
-      {name:'ContractRoleCosts'},
-      {name:'ContractServices'},
-      {name:'ContractServiceAdjustments'},
-      {name:'ContractServiceBundles'},
-      {name:'ContractServiceBundleAdjustments'},
-      {name:'ContractServiceBundleUnits'},
-      {name:'ContractServiceUnits'},
-      {name:'ContractTicketPurchases'},
+      {name:'ContractExclusionSetExcludedRoles', childOf: 'ContractExclusionSets', subname: 'ExcludedRoles'},
+      {name:'ContractExclusionSetExcludedWorkTypes', childOf: 'ContractExclusionSets', subname: 'ExcludedWorkTypes'},
+      {name:'ContractMilestones', childOf: 'Contracts', subname: 'Milestones'},
+      {name:'ContractNotes', childOf: 'Contracts', subname: 'Notes'},
+      {name:'ContractRates', childOf: 'Contracts', subname: 'Rates'},
+      {name:'ContractRetainers', childOf: 'Contracts', subname: 'Retainers'},
+      {name:'ContractRoleCosts', childOf: 'Contracts', subname: 'RoleCosts'},
+      {name:'ContractServices', childOf: 'Contracts', subname: 'Services'},
+      {name:'ContractServiceAdjustments', childOf: 'Contracts', subname: 'ServiceAdjustments'},
+      {name:'ContractServiceBundles', childOf: 'Contracts', subname: 'ServiceBundles'},
+      {name:'ContractServiceBundleAdjustments', childOf: 'Contracts', subname: 'ServiceBundleAdjustments'},
+      {name:'ContractServiceBundleUnits', childOf: 'Contracts', subname: 'ServiceBundleUnits'},
+      {name:'ContractServiceUnits', childOf: 'Contracts', subname: 'ServiceUnits'},
+      {name:'ContractTicketPurchases', childOf: 'Contracts', subname: 'TicketPurchases'},
       {name:'Countries'},
       {name:'Currencies'},
       {name:'Departments'},
-      {name:'ExpenseItems'},
+      {name:'Expenses'},
+      {name:'ExpenseItems', childOf: 'Expenses', subname: 'Items'},
       {name:'ExpenseReports'},
-      {name:'Holidays'},
+      {name:'Holidays', childOf: 'HolidaySets', subname: 'Holidays'},
       {name:'HolidaySets'},
       {name:'InternalLocations'},
       {name:'InternalLocationWithBusinessHours'},
       {name:'InventoryItems'},
-      {name:'InventoryItemSerialNumbers'},
+      {name:'InventoryItemSerialNumbers', childOf: 'InventoryItems', subname: 'SerialNumbers'},
       {name:'InventoryLocations'},
       {name:'InventoryTransfers'},
       {name:'Invoices'},
       {name:'InvoiceTemplates'},
       {name:'NotificationHistory'},
       {name:'Opportunities'},
-      {name:'OpportunityAttachments'},
-      {name:'OrganizationalLevel1'},
-      {name:'OrganizationalLevel2'},
+      {name:'OpportunityAttachments', childOf: 'Opportunities', subname: 'Attachments'},
+      {name:'OrganizationalLevel1s'},
+      {name:'OrganizationalLevel2s'},
       {name:'OrganizationalLevelAssociations'},
-      {name:'OrganizatonalResources'},
+      {name:'OrganizatonalResources', childOf: 'OrganizationalLevelAssociations', subname: 'Resources'},
       {name:'PaymentTerms'},
-      {name:'Phases'},
+      {name:'Phases', childOf: 'Projects', subname: 'Phases'},
       {name:'PriceListMaterialCodes'},
       {name:'PriceListProducts'},
       {name:'PriceListProductTiers'},
@@ -149,70 +153,76 @@ class AutotaskRestApi {
       {name:'PriceListServiceBundles'},
       {name:'PriceListWorkTypeModifiers'},
       {name:'Products'},
-      {name:'ProductNotes'},
-      {name:'ProductTiers'},
-      {name:'ProductVendors'},
+      {name:'ProductNotes', childOf: 'Products', subname: 'Notes'},
+      {name:'ProductTiers', childOf: 'Products', subname: 'Tiers'},
+      {name:'ProductVendors', childOf: 'Products', subname: 'Vendors'},
       {name:'Projects'},
-      {name:'ProjectAttachments'},
-      {name:'ProjectNotes'},
+      {name:'ProjectAttachments', childOf: 'Projects', subname: 'Attachments'},
+      {name:'ProjectCharges', childOf: 'Projects', subname: 'Charges'},
+      {name:'ProjectNotes', childOf: 'Projects', subname: 'Notes'},
       {name:'PurchaseApprovals'},
       {name:'PurchaseOrders'},
-      {name:'PurchaseOrderItems'},
-      {name:'PurchaseOrderItemReceiving'},
+      {name:'PurchaseOrderItems', childOf: 'PurchaseOrders', subname: 'Items'},
+      {name:'PurchaseOrderItemReceiving', childOf: 'PurchaseOrderItems', subname: 'Receiving'},
       {name:'Quotes'},
-      {name:'QuoteItems'},
+      {name:'QuoteItems', childOf: 'Quotes', subname: 'Items'},
       {name:'QuoteLocations'},
       {name:'QuoteTemplates'},
       {name:'Resources'},
       {name:'ResourceRoles'},
-      {name:'ResourceRoleDepartments'},
-      {name:'ResourceRoleQueues'},
-      {name:'ResourceServiceDeskRoles'},
-      {name:'ResourceSkills'},
+      {name:'ResourceRoleDepartments', childOf: 'Resources', subname: 'RoleDepartments'},
+      {name:'ResourceRoleQueues', childOf: 'Resources', subname: 'RoleQueues'},
+      {name:'ResourceServiceDeskRoles', childOf: 'Resources', subname: 'ServiceDeskRoles'},
+      {name:'ResourceSkills', childOf: 'Resources', subname: 'Skills'},
       {name:'Roles'},
-      {name:'SalesOrders'},
+      {name:'SalesOrders', childOf: 'Opportunities', subname: 'SalesOrders'},
       {name:'Services'},
       {name:'ServiceBundles'},
-      {name:'ServiceBundleServices'},
+      {name:'ServiceBundleServices', childOf: 'ServiceBundles', subname: 'Services'},
       {name:'ServiceCalls'},
-      {name:'ServiceCallTasks'},
-      {name:'ServiceCallTaskResource'},
-      {name:'ServiceCallTickets'},
-      {name:'ServiceCallTicketResource'},
-      {name:'ServiceLevelAgreementResults'},
+      {name:'ServiceCallTasks', childOf: 'ServiceCalls', subname: 'Tasks'},
+      {name:'ServiceCallTaskResource', childOf: 'ServiceCallTasks', subname: 'Resources'},
+      {name:'ServiceCallTickets', childOf: 'ServiceCalls', subname: 'Tickets'},
+      {name:'ServiceCallTicketResource', childOf: 'ServiceCallTickets', subname: 'Resources'},
+      {name:'ServiceLevelAgreementResults', childOf: 'ServiceLevelAgreements', subname: 'Results'},
       {name:'ShippingTypes'},
       {name:'Skills'},
       {name:'Subscriptions'},
-      {name:'SubscriptionPeriods'},
+      {name:'SubscriptionPeriods', childOf: 'Subscriptions', subname: 'Periods'},
       {name:'Surveys'},
       {name:'SurveyResults'},
-      {name:'Tasks'},
-      {name:'TaskAttachments'},
-      {name:'TaskNotes'},
-      {name:'TaskPredecessors'},
-      {name:'TaskSecondaryResources'},
+      {name:'Tasks', childOf: 'Projects', subname: 'Tasks'},
+      {name:'TaskAttachments', childOf: 'Tasks', subname: 'Attachments'},
+      {name:'TaskNotes', childOf: 'Tasks', subname: 'Notes'},
+      {name:'TaskNoteAttachments', childOf: 'TaskNotes', subname: 'Attachments'},
+      {name:'TaskPredecessors', childOf: 'Tasks', subname: 'Predecessors'},
+      {name:'TaskSecondaryResources', childOf: 'Tasks', subname: 'SecondaryResources'},
       {name:'Taxes'},
       {name:'TaxCategories'},
       {name:'TaxRegions'},
+      {name:'ThresholdInformation'},
       {name:'Tickets'},
-      {name:'TicketAdditionalConfigurationItems'},
-      {name:'TicketAdditionalContacts'},
-      {name:'TicketAttachments'},
+      {name:'TicketAdditionalConfigurationItems', childOf: 'Tickets', subname: 'AdditionalConfigurationItems'},
+      {name:'TicketAdditionalContacts', childOf: 'Tickets', subname: 'AdditionalContacts'},
+      {name:'TicketAttachments', childOf: 'Tickets', subname: 'Attachments'},
       {name:'TicketCategories'},
-      {name:'TicketCategoryFieldDefaults'},
-      {name:'TicketChangeRequestApprovals'},
-      {name:'TicketCharges'},
-      {name:'TicketChecklistItems'},
-      {name:'TicketChecklistLibraries'},
+      {name:'TicketCategoryFieldDefaults', childOf: 'TicketCategories', subname: 'FieldDefaults'},
+      {name:'TicketChangeRequestApprovals', childOf: 'Tickets', subname: 'ChangeRequestApprovals'},
+      {name:'TicketCharges', childOf: 'Tickets', subname: 'Charges'},
+      {name:'TicketChecklistItems', childOf: 'Tickets', subname: 'ChecklistItems'},
+      {name:'TicketChecklistLibraries', childOf: 'Tickets', subname: 'ChecklistLibraries'},
       {name:'TicketHistory'},
-      {name:'TicketNotes'},
-      {name:'TicketRmaCredits'},
-      {name:'TicketSecondaryResources'},
+      {name:'TicketNotes', childOf: 'Tickets', subname: 'Notes'},
+      {name:'TicketNoteAttachments', childOf: 'TicketNotes', subname: 'Attachments'},
+      {name:'TicketRmaCredits', childOf: 'Tickets', subname: 'RmaCredits'},
+      {name:'TicketSecondaryResources', childOf: 'Tickets', subname: 'SecondaryResources'},
       {name:'TimeEntries'},
+      {name:'TimeEntryAttachments', childOf: 'TimeEntries', subname: 'Attachments'},
       {name:'UserDefinedFieldDefinitions'},
-      {name:'UserDefinedFieldListItems'},
-      {name:'WebhookEventErrorLog'},
+      {name:'UserDefinedFieldListItems', childOf: 'UserDefinedFields', subname: 'ListItems'},//note, no parent native entity
+      {name:'WebhookEventErrorLogs'},
       {name:'WorkTypeModifiers'},
+      {name:'ZoneInformation'},
     ];
     this.connector = {};
   }
@@ -227,7 +237,13 @@ class AutotaskRestApi {
       this.zoneInfo = await this._get('/zoneInformation', {user: this.user});
       for(let entity of this.available_entities){
         
+        let missingEntityErrorMsg = `No ${entity.name} parameter was provided. Please provide the ${entity.name} data.`;
+        let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id.`;
+          
         this.connector[entity.name] = {
+          parent: entity.childOf,
+          isChild: entity.childOf ? true : false,
+
           query : async (search)=>{
             return await this._post(`/${entity.name}/query`, search);
           },
@@ -240,24 +256,28 @@ class AutotaskRestApi {
             return await this._get(`/${entity.name}/${id}`);
           },
 
-          update : async (toSave)=>{
-            return await this._patch(`/${entity.name}`, toSave);
+          update : async (toSave, opts)=>{
+            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+            return await this._patch(`/${entity.name}`, toSave, opts);
           },
 
-          create : async (toSave)=>{
-            return await this._post(`/${entity.name}`, toSave);
+          create : async (toSave, opts)=>{
+            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+            return await this._post(`/${entity.name}`, toSave, opts);
           },
 
           delete : async (id)=>{
+            if(!id) throw new Error(`${missingIdErrorMessage}`);
             return await this._delete(`/${entity.name}/${id}`);
           },
 
           //missing properties set to null!
-          replace : async (toSave)=>{
-            return await this._put(`/${entity.name}`, toSave);
+          replace : async (toSave, opts)=>{
+            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+            return await this._put(`/${entity.name}`, toSave, opts);
           },
 
-          info : async ()=>{
+          info: async ()=>{
             return await this._get(`/${entity.name}/entityInformation`);
           },
 
@@ -269,6 +289,60 @@ class AutotaskRestApi {
             return await this._get(`/${entity.name}/entityInformation/userDefinedFields`);
           },
         };
+
+        //Adjust endpoints for child entities.
+        if(entity.childOf){
+          let missingParentIdErrorMsg = `${entity.name} are children of ${entity.childOf}. Please provide the id of the ${entity.childOf} entity as the first parameter. It must be an integer.`;
+          let missingEntityErrorMsg = `No ${entity.subname} was provided. Please provide the ${entity.subname} data as the second parameter.`;
+          let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id as the second parameter. It must be an integer.`;
+
+          // Attachment child entities require special handling...
+          if([
+            'ConfigurationItemAttachments',
+            'ConfigurationItemNoteAttachments',
+            'OpportunityAttachments',
+            'TaskAttachments',
+            'TaskNoteAttachments',
+            'TicketAttachments',
+            'TicketNoteAttachments',
+            'TimeEntryAttachments'
+          ].includes(entity.name)){
+            this.connector[entity.name].get = async (parentId, id)=>{
+              if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+              if(id === null || typeof id === 'undefined' ) throw new Error(`${missingIdErrorMessage}`);
+              //This is the only attachment endpoint that returns the base64 encoded data. Other approaches yield `null` for the `data` property
+              return await this._get(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
+            };
+          }
+
+
+          //create, update, replace, and delete have different signatures
+          this.connector[entity.name].update = async (parentId, toSave, opts)=>{
+            if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+            return await this._patch(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
+          };
+
+          this.connector[entity.name].create = async (parentId, toSave, opts)=>{
+            if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+            return await this._post(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
+          };
+
+          this.connector[entity.name].delete = async (parentId, id)=>{
+            if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+            if(id === null || typeof id === 'undefined' ) throw new Error(`${missingIdErrorMessage}`);
+            return await this._delete(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
+          };
+
+          this.connector[entity.name].replace = async (parentId, toSave, opts)=>{
+            if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+            return await this._put(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
+          };
+        }
+
+
       }
     }
   }
@@ -280,10 +354,10 @@ class AutotaskRestApi {
    * entity in the API. You can use each entity to perform API calls.
    * 
    * @example
-   * let api = autotask.api();
+   * let api = await autotask.api();
    * api.Companies.get(0);
    * api.Tickets.query( myTicketQuery );
-   * api.Contacts.create( myContact );
+   * api.CompanyContacts.create(0, myContact );
    */
   async api(){
     if(!this.zoneInfo){
@@ -301,16 +375,16 @@ class AutotaskRestApi {
     return await this._fetch('DELETE', endpoint, query);
   }
   /** sparse update an entity */
-  async _patch(endpoint, payload){
-    return await this._fetch('PATCH', endpoint, null, payload);
+  async _patch(endpoint, payload, opts){
+    return await this._fetch('PATCH', endpoint, null, payload, opts);
   }
   /** full update an entity */
-  async _put(endpoint, payload){
-    return await this._fetch('PUT', endpoint, null, payload);
+  async _put(endpoint, payload, opts){
+    return await this._fetch('PUT', endpoint, null, payload, opts);
   }
   /** create an entity */
-  async _post(endpoint, payload){
-    return await this._fetch('POST', endpoint, null, payload);
+  async _post(endpoint, payload, opts){
+    return await this._fetch('POST', endpoint, null, payload, opts);
   }
 
   /**
@@ -320,7 +394,8 @@ class AutotaskRestApi {
    * @param {object} query hash of query parameters, if applicable
    * @param {object} payload to be converted to JSON, if provided 
    * @param {object} opts additional options (typically omitted)
-   * @param {boolean} omit_credentials omits the credentials on the request.
+   * @param {boolean} opts.omit_credentials omits the credentials on the request.
+   * @param {boolean} opts.ImpersonationResourceId specifies an Autotask Resource ID to impersonate on a create/update operation
    */
   async _fetch(method, endpoint, query, payload, opts){
     try{
@@ -337,6 +412,9 @@ class AutotaskRestApi {
         fetchParms.headers.UserName = this.user;
         fetchParms.headers.Secret = this.secret;
       }
+      if(opts && opts.ImpersonationResourceId){
+        fetchParms.headers.ImpersonationResourceId = opts.ImpersonationResourceId;
+      }
       if(payload) fetchParms.body = JSON.stringify(payload)
       let querystring = query ? '?'+qs.stringify(query) : '';
 
@@ -352,28 +430,92 @@ class AutotaskRestApi {
         verbose(`  received: ${JSON.stringify(result)}`);
         return result;
       } else {
-        let result = await response.text();
-        debug(`...error. (HTTP ${response.status})`);
-        verbose(`  received: ${result}`);
-       
-        throw new AutotaskApiError(`HTTP ${response.status}\n${result}`);
+        return await this._handleNotOk(response)
       }
     }catch(ex){
       if(ex instanceof AutotaskApiError){
-        throw ex;
+        //rethrow only
       } else {
+        //log
         console.error(ex);
       }
-      
+      throw ex;
     }
+  }
+
+  /**
+   * Handles API responses that are not in the normal HTTP OK code range (e.g. 200) in a consistent manner.
+   * @param {object} response the fetch response (without any of the data methods invoked) 
+   * @param {string} url the full url used for the API call
+   * @param {object} fetchOpts the options used by node-fetch
+   */
+  async _handleNotOk(response, url, fetchOpts){
+    debug(`  ...Error. HTTP-${response.status}`);
+    
+    let result = null;
+    if (response.status >=300 & response.status < 400){
+      result = await response.json();
+
+    } else if (response.status >=400 & response.status < 500){
+      if(response.status === 401 || response.status === 403){
+        result = await response.text();
+        debug(result);
+        //Future use: these may be retried once after attempting to refresh the access token.
+        throw new AutotaskApiError(result);
+      } else if(response.status === 404){
+        debug(`  not found.`);
+        return null;
+      }
+      //client errors
+      result = await response.json();
+      
+      verbose(`  client error. response payload: ${JSON.stringify(result)}`);
+      throw new AutotaskApiError(`Client error (HTTP-${response.status}). ${result.title} Error code: ${result['o:errorCode']}`);
+
+    } else if (response.status >=500) {
+      result = await response.text();
+      verbose(`  server error. response payload: ${result}`);
+      throw new AutotaskApiError(`Server error (HTTP-${response.status}). ${result}`);
+    } else { 
+      throw err; //Cannot be handled.
+    }
+    return result;
+   
   }
 
 
 }
 
 class AutotaskApiError extends Error {
-
 }
 
+exports.FilterOperators = {
+  /** Requires that the field value match the exact criteria provided */
+  eq: "eq",
+  /** Requires that the field value be anything other than the criteria provided */
+  noteq: "noteq",
+  /** Requires that the field value be greater than the criteria provided */
+  gt: "gt",
+  /** Requires that the field value be greater than or equal to the criteria provided */
+  gte: "gte",
+  /** Requires that the field value be less than the criteria provided */
+  lt: "lt",
+  /** Requires that the field value be less than or equal to the criteria provided */
+  lte: "lte",
+  /**	Requires that the field value begin with the defined criteria */
+  beginsWith: "beginsWith",
+  /** Requires that the field value end with the defined criteria */
+  endsWith: "endsWith",
+  /** Allows for the string provided as criteria to match any resource that contains the string in its value */
+  contains: "contains",
+  /**	Enter exist to query for fields in which the data you specify is not null. */
+  exist: "exist",
+  /** Enter notExist to query for fields in which the specified data is null */
+  notExist: "notExist",
+  /** With this value specified, the query will return only the values in the list array that match the field value you specify */
+  in: "in",
+  /** With this value specified, the query will only return the values in the list array that do not match the field value you specify */
+  notIn: "notIn",
+};
 exports.AutotaskRestApi = AutotaskRestApi;
 exports.AutotaskApiError = AutotaskApiError;
