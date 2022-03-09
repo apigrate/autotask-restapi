@@ -1,5 +1,5 @@
 require('dotenv').config();
-const {AutotaskRestApi} = require('.');
+const {AutotaskRestApi, FilterOperators} = require('.');
 let autotask = new AutotaskRestApi(
   process.env.AUTOTASK_USER, 
   process.env.AUTOTASK_SECRET, 
@@ -13,11 +13,11 @@ let autotask = new AutotaskRestApi(
     // console.log('%o',autotask.available_entities);
     // console.log('%o',autotask.available_entities.filter(e=>e.childOf));
     // Top level entities.
-    autotask.available_entities.forEach(e=>{
-      if(!e.childOf){
-        console.log(`  * ${e.name}`);
-      }
-    });
+    // autotask.available_entities.forEach(e=>{
+    //   if(!e.childOf){
+    //     console.log(`  * ${e.name}`);
+    //   }
+    // });
 
     // Child entities.
     // autotask.available_entities.forEach(e=>{
@@ -61,6 +61,7 @@ let autotask = new AutotaskRestApi(
 
     // let status_field = result.fields.find(field=>field.name==="status");
   
+    result = await api.Companies.query({filter:[{field:'companyName', op:FilterOperators.beginsWith, value:'Bee'}]});
 
     console.log(`result:\n${JSON.stringify(result,null,2)}`);
   }catch(ex){

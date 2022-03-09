@@ -356,6 +356,42 @@ This will yield a `result`:
 ### udfInfo
 [related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/Entities/UserdefinedFieldsUDFs.htm)
 
+### Special Cases
+
+#### Modules
+The Modules entity allows you to gather information about the active status of modules in Autotask PSA. It can only be queried. Use either empty `.get()` or `.query()` methods to obtain the list of modules.
+
+Example:
+
+```javascript
+result = await api.Modules.get();
+```
+
+results:
+
+```json
+{
+  "modules": [
+    {
+      "key": 24,
+      "value": true
+    },
+    {
+      "key": 36,
+      "value": true
+    },
+    {
+      "key": 65,
+      "value": true
+    },
+    ...
+}
+
+```
+
+
+[related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/Entities/ModulesEntity.htm)
+
 ## Available Entities
 
 The following is a list of all Autotask entities supported by the connector:
@@ -396,6 +432,7 @@ The following is a list of all Autotask entities supported by the connector:
 * InventoryTransfers
 * Invoices
 * InvoiceTemplates
+* Modules
 * NotificationHistory
 * Opportunities
 * OrganizationalLevel1

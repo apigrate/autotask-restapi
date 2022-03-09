@@ -136,6 +136,7 @@ class AutotaskRestApi {
       {name:'InventoryTransfers'},
       {name:'Invoices'},
       {name:'InvoiceTemplates'},
+      {name:'Modules'},
       {name:'NotificationHistory'},
       {name:'Opportunities'},
       {name:'OpportunityAttachments', childOf: 'Opportunities', subname: 'Attachments'},
@@ -245,6 +246,7 @@ class AutotaskRestApi {
           isChild: entity.childOf ? true : false,
 
           query : async (search)=>{
+            if(entity.name==='Modules') return await this._get(`/${entity.name}`);
             return await this._post(`/${entity.name}/query`, search);
           },
 
@@ -253,6 +255,7 @@ class AutotaskRestApi {
           },
 
           get : async (id)=>{
+            if(entity.name==='Modules') return await this._get(`/${entity.name}`);
             return await this._get(`/${entity.name}/${id}`);
           },
 
