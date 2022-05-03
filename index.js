@@ -83,7 +83,7 @@ class AutotaskRestApi {
       {name:'CompanyWebhookFields', childOf: 'CompanyWebhooks', subname: 'Fields'},
       {name:'CompanyWebhookUdfFields', childOf: 'CompanyWebhoosk', subname: 'UdfFields'},
       {name:'ConfigurationItems'},
-      {name:'ConfigurationItemAttachments', childOf: 'ConfigurationItem', subname: 'Attachments'},
+      {name:'ConfigurationItemAttachments', childOf: 'ConfigurationItems', subname: 'Attachments'},
       {name:'ConfigurationItemBillingProductAssociations', childOf: 'ConfigurationItems', subname: 'BillingProductAssociations'},
       {name:'ConfigurationItemCategories'},
       {name:'ConfigurationItemCategoryUdfAssociations', childOf: 'ConfigurationItemCategories', subname: 'UdfAssociations'},
