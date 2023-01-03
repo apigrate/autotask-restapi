@@ -10,7 +10,7 @@ npm install @apigrate/autotask-restapi --save
 ## Connecting to Autotask
 
 ```javascript
-const {AutotaskRestApi} = require('@apigrate/autotask-rest');
+const {AutotaskRestApi} = require('@apigrate/autotask-restapi');
 
 const autotask = new AutotaskRestApi(
   process.env.AUTOTASK_USER, // make sure it's an API User
