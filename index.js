@@ -17,6 +17,8 @@ const fetch = require('node-fetch');
 const qs = require('query-string');
 const debug = require('debug')('autotask:restapi');
 const verbose = require('debug')('autotask:restapi:verbose');
+const https = require('https');
+const crypto = require('crypto');
 
 class AutotaskRestApi {
   /**
@@ -425,6 +427,10 @@ class AutotaskRestApi {
       debug(`${method}: ${full_url}`);
       if(payload) verbose(`  sending: ${JSON.stringify(payload)}`);
 
+      // Added until Autotask servers support RI (IIS issue). Ref: https://stackoverflow.com/questions/74324019/allow-legacy-renegotiation-for-nodejs
+      fetchParms.agent = new https.Agent({
+        secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT
+      });
       let response = await fetch(`${full_url}`, fetchParms);
       
       if(response.ok){
