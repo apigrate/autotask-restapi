@@ -1,5 +1,5 @@
 /*
-  Copyright 2020-2021 Apigrate LLC
+  Copyright 2020-2023 Apigrate LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -439,7 +439,36 @@ class AutotaskRestApi {
         verbose(`  received: ${JSON.stringify(result)}`);
         return result;
       } else {
-        return await this._handleNotOk(response)
+
+        debug(`  ...Error. HTTP-${response.status}`);
+        let result = null;
+        if (response.status >=300 & response.status < 400){
+          result = await response.json();
+    
+        } else if (response.status >=400 & response.status < 500){
+          if(response.status === 401 || response.status === 403){
+            result = await response.text();
+            debug(result);
+            //Future use: these may be retried once after attempting to refresh the access token.
+            throw new AutotaskApiError(result);
+          } else if(response.status === 404){
+            debug(`  not found.`);
+            return null;
+          }
+          //client errors
+          result = await response.json();
+          
+          verbose(`  client error. response payload: ${JSON.stringify(result)}`);
+          throw new AutotaskApiError(`Client error (HTTP-${response.status}). ${result.title} Error code: ${result['o:errorCode']}`);
+    
+        } else if (response.status >=500) {
+          result = await response.text();
+          verbose(`  server error. response payload: ${result}`);
+          throw new AutotaskApiError(`Server error (HTTP-${response.status}). ${result}`);
+        } else { 
+          throw err; //Cannot be handled.
+        }
+        return result;
       }
     }catch(ex){
       if(ex instanceof AutotaskApiError){

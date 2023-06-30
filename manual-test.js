@@ -25,7 +25,7 @@ let autotask = new AutotaskRestApi(
     //     console.log(`  * ${e.name} &rarr; ${e.childOf}/${e.subname}`);
     //   }
     // });
-    // result = await api.Companies.info();
+    result = await api.Companies.info();
 
     // result = await api.Companies.fieldInfo();
 
@@ -39,29 +39,23 @@ let autotask = new AutotaskRestApi(
     // result = await api.Companies.create(myCompany);
   
 
-    /*
-    let myToDo = {
-      ActionType: 3,
-      AssignedToResourceID: 29683995,
-      CompanyID: 0, 
-      ActivityDescription: "Learn more about the Autotask REST API",
-      StartDateTime: '2020-06-15',
-      EndDateTime: '2020-06-16',
-    };
+
+    // let myToDo = {
+    //   ActionType: -3,
+    //   AssignedToResourceID: 29683995,
+    //   CompanyID: 0, 
+    //   ActivityDescription: "Learn more about the Autotask REST API",
+    //   StartDateTime: '2020-06-15',
+    //   EndDateTime: '2020-06-16',
+    // };
     
-    result = await api.CompanyToDos.create(0, myToDo);
+    // result = await api.CompanyToDos.create(0, myToDo);
   
-    {
-      "itemId": 29684378
-    }
-    */
-
-
     //  result = await api.Tickets.fieldInfo();
 
     // let status_field = result.fields.find(field=>field.name==="status");
   
-    result = await api.Companies.query({filter:[{field:'companyName', op:FilterOperators.beginsWith, value:'Bee'}]});
+    // result = await api.Companies.query({filter:[{field:'companyName', op:FilterOperators.beginsWith, value:'Bee'}]});
 
     console.log(`result:\n${JSON.stringify(result,null,2)}`);
   }catch(ex){
