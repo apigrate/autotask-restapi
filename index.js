@@ -496,7 +496,11 @@ class AutotaskRestApi {
 
     } else if (response.status >=400 & response.status < 500){
       if(response.status === 401 || response.status === 403){
-        result = await response.text();
+        if(result == null){
+          result = "Unauthorized!! Please check your Autotask credentials";
+        }else{
+          result = await response.text();
+        }
         debug(result);
         //Future use: these may be retried once after attempting to refresh the access token.
         throw new AutotaskApiError(result);
