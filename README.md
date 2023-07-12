@@ -71,6 +71,8 @@ let product = await api.Products.get(232486923);
 // product = { item: { id: 232486923, ...product object properties... } }
 ```
 
+> When you attempt to get an an entity by id that **doesn't exist**, this connector automatically swallows the HTTP-404 returned by the Autotask REST API and instead returns `{item: null}`. This is an intentional decision to facilitate better code readability.
+
 > Note, filter expressions using the `get` method are not supported. Use the `query` method instead.
 
 [related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_Basic_Query_Calls.htm)
@@ -568,6 +570,44 @@ The REST API introduces a parent-child relationship among some Autotask entities
 * TicketSecondaryResources &rarr; Tickets/SecondaryResources
 * TimeEntryAttachments &rarr; TimeEntries/Attachments
 * UserDefinedFieldListItems &rarr; UserDefinedFields/ListItems
+
+## Error Handling
+
+REST API HTTP errors are wrapped in an AutotaskApiError class that can be used to obtain further information about errors returned from Autotask.
+
+For example:
+
+```javascript
+try{
+  let myCompany = {
+    CompanyName: undefined, //<-- it is required!
+    CompanyType: 3,
+    Phone: '8005551212',
+    OwnerResourceID: 29683995
+  };
+  let result = await api.Companies.create(myCompany);
+
+} catch ( err ){
+  if( err instance of AutotaskApiError ){
+    // Custom handling is possible for Autotask REST API errors.
+    console.error(`Error message: ${ err.message }\nHTTP status: ${ err.status }\nError Details: ${ JSON.stringify(err.details) }`)
+  }
+}
+```
+
+Please note, in some cases, the Autotask REST API HTTP error handling may not behave in ways you might expect. For example:
+
+An invalid API username will lead to an HTTP 500 error returning:
+```json 
+{"errors":["Zone information could not be determined"]}
+```
+, not an HTTP 401 error.
+
+An invalid API Integration key will lead to an HTTP 500 error returning:
+```json 
+{"errors":["IntegrationCode is invalid."]}
+```
+, not an HTTP 401 error.
 
 ## Debugging
 

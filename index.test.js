@@ -110,3 +110,72 @@ test('can delete an entity', async () => {
   let {item: contactAfterUpdate} = await api.Companies.get(contactIdCreated);
   expect(contactAfterUpdate).toBeDefined();
 });
+
+test('item is null when when get by id not found', async () => {
+  let result = await api.Companies.get(9999999);
+  expect(result).toBeDefined();
+  expect(result.item).toBe(null);
+});
+
+test('HTTP errors are handled', async () => {
+  try{
+    let myCompany = {
+      CompanyName: undefined, //<-- it is required!
+      CompanyType: 3,
+      Phone: '8005551212',
+      OwnerResourceID: 29683995
+    };
+    let result = await api.Companies.create(myCompany);
+  }catch(err){
+    if(err instanceof AutotaskRestApi){
+      expect(err.status).toBe(500);
+      expect(err.details).toBeDefined();
+    }
+  }
+});
+
+test('zoneinfo errors are handled', async () => {
+  try{
+    autotask = new AutotaskRestApi(
+      "bad", 
+      process.env.AUTOTASK_SECRET, 
+      process.env.AUTOTASK_INTEGRATION_CODE );
+    api = await autotask.api();
+  }catch(err){
+    if(err instanceof AutotaskRestApi){
+      expect(err.status).toBe(500);
+      expect(err.details).toBeDefined();
+    }
+  }
+});
+
+test('authorization errors are handled', async () => {
+  try{
+    autotask = new AutotaskRestApi(
+      process.env.AUTOTASK_USER,
+      process.env.AUTOTASK_SECRET+'bad', 
+      process.env.AUTOTASK_INTEGRATION_CODE );
+    api = await autotask.api();
+  }catch(err){
+    if(err instanceof AutotaskRestApi){
+      expect(err.status).toBe(401);
+      expect(err.details).toBeDefined();
+    }
+  }
+});
+
+test('integration code errors are handled', async () => {
+  try{
+    autotask = new AutotaskRestApi(
+      process.env.AUTOTASK_USER,
+      process.env.AUTOTASK_SECRET, 
+      process.env.AUTOTASK_INTEGRATION_CODE+'bad' );
+    api = await autotask.api();
+  }catch(err){
+    if(err instanceof AutotaskRestApi){
+      expect(err.status).toBe(500);
+      expect(err.details).toBeDefined();
+    }
+  }
+});
+

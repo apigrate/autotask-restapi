@@ -13,8 +13,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-const fetch = require('node-fetch');
-const qs = require('query-string');
+require('isomorphic-fetch');
 const debug = require('debug')('autotask:restapi');
 const verbose = require('debug')('autotask:restapi:verbose');
 const https = require('https');
@@ -420,8 +419,17 @@ class AutotaskRestApi {
       if(opts && opts.ImpersonationResourceId){
         fetchParms.headers.ImpersonationResourceId = opts.ImpersonationResourceId;
       }
-      if(payload) fetchParms.body = JSON.stringify(payload)
-      let querystring = query ? '?'+qs.stringify(query) : '';
+      if(payload) fetchParms.body = JSON.stringify(payload);
+      
+      let querystring = '';
+      if(query){
+        for(let parmname in query){
+          if(typeof query[parmname] !== 'undefined'){
+            querystring += `&${parmname}=${encodeURIComponent(query[parmname])}`;
+          }  
+        }
+        if(querystring.startsWith('&')) querystring=`?${querystring.substring(1)}`
+      };
 
       let full_url = `${this.zoneInfo ? this.zoneInfo.url : this.base_url}V${this.version}${endpoint}${querystring}`;
       debug(`${method}: ${full_url}`);
@@ -439,34 +447,43 @@ class AutotaskRestApi {
         verbose(`  received: ${JSON.stringify(result)}`);
         return result;
       } else {
-
         debug(`  ...Error. HTTP-${response.status}`);
         let result = null;
+        let text = await response.text();
+        // Usually JSON is returned, but not always, so...
+        try{
+          result = JSON.parse(text);
+          verbose(`  response payload: ${JSON.stringify(result)}`);
+        }catch(err){
+          //Can't parse json. Just use text.
+          result = text;
+          verbose(`  response payload: ${text}`);
+        }
+
+        verbose(result);
+        
         if (response.status >=300 & response.status < 400){
-          result = await response.json();
-    
-        } else if (response.status >=400 & response.status < 500){
-          if(response.status === 401 || response.status === 403){
-            result = await response.text();
-            debug(result);
-            //Future use: these may be retried once after attempting to refresh the access token.
-            throw new AutotaskApiError(result);
-          } else if(response.status === 404){
-            debug(`  not found.`);
-            return null;
-          }
-          //client errors
-          result = await response.json();
-          
-          verbose(`  client error. response payload: ${JSON.stringify(result)}`);
-          throw new AutotaskApiError(`Client error (HTTP-${response.status}). ${result.title} Error code: ${result['o:errorCode']}`);
-    
+          verbose(` redirection.`);
+        
+        } else if(response.status === 401 || response.status === 403){
+          verbose(` authorization error.`);
+          throw new AutotaskApiError('Authorization error.', response.status, result);
+        
+        } else if(response.status === 404){
+          // Not an "error" from the standpoint of processing. Return null for any not-found responses.
+          verbose(`  not found.`);
+          return null;
+        
+        } else if (response.status >= 400 && response.status < 500){ 
+          verbose(`  client error.`);
+          throw new AutotaskApiError(`Client error (HTTP-${response.status}). ${text}`, response.status, result);
+        
         } else if (response.status >=500) {
-          result = await response.text();
-          verbose(`  server error. response payload: ${result}`);
-          throw new AutotaskApiError(`Server error (HTTP-${response.status}). ${result}`);
+          verbose(`  server error.`);
+          throw new AutotaskApiError(`Server error (HTTP-${response.status}). ${text}`, response.status, result);
+        
         } else { 
-          throw err; //Cannot be handled.
+          throw err; //Cannot be handled here.
         }
         return result;
       }
@@ -481,50 +498,23 @@ class AutotaskRestApi {
     }
   }
 
-  /**
-   * Handles API responses that are not in the normal HTTP OK code range (e.g. 200) in a consistent manner.
-   * @param {object} response the fetch response (without any of the data methods invoked) 
-   * @param {string} url the full url used for the API call
-   * @param {object} fetchOpts the options used by node-fetch
-   */
-  async _handleNotOk(response, url, fetchOpts){
-    debug(`  ...Error. HTTP-${response.status}`);
-    
-    let result = null;
-    if (response.status >=300 & response.status < 400){
-      result = await response.json();
-
-    } else if (response.status >=400 & response.status < 500){
-      if(response.status === 401 || response.status === 403){
-        result = await response.text();
-        debug(result);
-        //Future use: these may be retried once after attempting to refresh the access token.
-        throw new AutotaskApiError(result);
-      } else if(response.status === 404){
-        debug(`  not found.`);
-        return null;
-      }
-      //client errors
-      result = await response.json();
-      
-      verbose(`  client error. response payload: ${JSON.stringify(result)}`);
-      throw new AutotaskApiError(`Client error (HTTP-${response.status}). ${result.title} Error code: ${result['o:errorCode']}`);
-
-    } else if (response.status >=500) {
-      result = await response.text();
-      verbose(`  server error. response payload: ${result}`);
-      throw new AutotaskApiError(`Server error (HTTP-${response.status}). ${result}`);
-    } else { 
-      throw err; //Cannot be handled.
-    }
-    return result;
-   
-  }
-
-
 }
 
+/**
+ * Extends errors, allow you to parse HTTP status and get details about REST API errors.
+ */
 class AutotaskApiError extends Error {
+  /**
+   * 
+   * @param {string} message 
+   * @param {number} status HTTP status code
+   * @param {string|object} details typically a JSON object returned from the server with details about the error.
+   */
+  constructor(message, status, details){
+    super(message)
+    this.status = status;
+    this.details = details;
+  }
 }
 
 exports.FilterOperators = {

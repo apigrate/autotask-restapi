@@ -1,9 +1,9 @@
 require('dotenv').config();
-const {AutotaskRestApi, FilterOperators} = require('.');
+const {AutotaskRestApi, AutotaskApiError, FilterOperators} = require('.');
 let autotask = new AutotaskRestApi(
-  process.env.AUTOTASK_USER, 
+  process.env.AUTOTASK_USER,
   process.env.AUTOTASK_SECRET, 
-  process.env.AUTOTASK_INTEGRATION_CODE );
+  process.env.AUTOTASK_INTEGRATION_CODE+'bad' );
 
 (async()=>{
   try{
@@ -58,7 +58,12 @@ let autotask = new AutotaskRestApi(
     // result = await api.Companies.query({filter:[{field:'companyName', op:FilterOperators.beginsWith, value:'Bee'}]});
 
     console.log(`result:\n${JSON.stringify(result,null,2)}`);
-  }catch(ex){
-    console.error(ex);
+  }catch(err){
+    if( err instanceof AutotaskApiError ){
+      // Custom handling is possible for Autotask REST API errors.
+      console.error(`Error message: ${err.message}\nHTTP status: ${err.status}\nError Details: ${JSON.stringify(err.details)}`);
+    } else {
+      console.error(err);
+    }
   }
 })()
