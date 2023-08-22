@@ -145,7 +145,7 @@ class AutotaskRestApi {
       {name:'OrganizationalLevel1s'},
       {name:'OrganizationalLevel2s'},
       {name:'OrganizationalLevelAssociations'},
-      {name:'OrganizatonalResources', childOf: 'OrganizationalLevelAssociations', subname: 'Resources'},
+      {name:'OrganizationalResources', childOf: 'OrganizationalLevelAssociations', subname: 'Resources'},
       {name:'PaymentTerms'},
       {name:'Phases', childOf: 'Projects', subname: 'Phases'},
       {name:'PriceListMaterialCodes'},
