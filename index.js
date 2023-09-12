@@ -124,6 +124,7 @@ class AutotaskRestApi {
       {name:'ContractTicketPurchases', childOf: 'Contracts', subname: 'TicketPurchases'},
       {name:'Countries'},
       {name:'Currencies'},
+      {name:'DeletedTicketLogs'},
       {name:'Departments'},
       {name:'Expenses'},
       {name:'ExpenseItems', childOf: 'Expenses', subname: 'Items'},
