@@ -1,24 +1,24 @@
 require('dotenv').config();
 let {AutotaskRestApi, FilterOperators} = require('.');
 var autotask = null;
-var api = null;
 
 beforeAll(async ()=>{
   autotask = new AutotaskRestApi(
     process.env.AUTOTASK_USER, 
     process.env.AUTOTASK_SECRET, 
     process.env.AUTOTASK_INTEGRATION_CODE );
-  api = await autotask.api();
+  await autotask.Companies.info();
 });
 
-it('must load zoneInfo on initialization', async () => {
+it('must load zoneInfo on automatically on an API call', async () => {
+  await autotask.Companies.info();
   expect(autotask.zoneInfo).toBeDefined();
   // console.log('zoneInfo result: %o', autotask.zoneInfo);
   expect(autotask.zoneInfo.url).toBeDefined();
 });
 
 it('can get by id', async () => {
-  let result = await api.Companies.get(0);
+  let result = await autotask.Companies.get(0);
   // console.log('get result: %o', result);
   let company = result.item;
   expect(company).toBeDefined();
@@ -27,7 +27,7 @@ it('can get by id', async () => {
 
 test('can query multiple.', async () => {
 
-  let result = await api.Companies.query({filter:[
+  let result = await autotask.Companies.query({filter:[
     {
       field: "companyName",
       op: FilterOperators.beginsWith,
@@ -55,7 +55,7 @@ test('can create an entity', async () => {
     lastName: "Testington",
     isActive: 0,
   };
-  let result = await api.CompanyContacts.create(0, contact);
+  let result = await autotask.CompanyContacts.create(0, contact);
   // console.log('create result: %o', result);
   let itemId = result.itemId;
   expect(itemId).toBeDefined();
@@ -69,10 +69,10 @@ test('can update an entity', async () => {
     firstName: "Ingrid",
     isActive: 0,
   };
-  let result = await api.CompanyContacts.update(0, contactUpdate);
+  let result = await autotask.CompanyContacts.update(0, contactUpdate);
   // console.log('update result: %o', result);
   expect(result).toBeDefined();
-  let {item: contactAfterUpdate} = await api.Contacts.get(contactIdCreated);
+  let {item: contactAfterUpdate} = await autotask.Contacts.get(contactIdCreated);
   expect(contactAfterUpdate).toBeDefined();
   expect(contactAfterUpdate.id).toBe(contactIdCreated);
   expect(contactAfterUpdate.firstName).toMatch(/Ingrid/);
@@ -88,10 +88,10 @@ test('can replace an entity', async () => {
     lastName: "Adama",
     isActive: 1,
   };
-  let result = await api.CompanyContacts.replace(0, contactUpdate); 
+  let result = await autotask.CompanyContacts.replace(0, contactUpdate); 
   // console.log('update result: %o', result);
   expect(result).toBeDefined();
-  let {item: contactAfterUpdate} = await api.Contacts.get(contactIdCreated);
+  let {item: contactAfterUpdate} = await autotask.Contacts.get(contactIdCreated);
   expect(contactAfterUpdate).toBeDefined();
   expect(contactAfterUpdate.id).toBe(contactIdCreated);
   expect(contactAfterUpdate.title).toMatch(/Commander/);
@@ -104,15 +104,15 @@ test('can replace an entity', async () => {
 
 test('can delete an entity', async () => {
  
-  let result = await api.CompanyContacts.delete(0, contactIdCreated);
+  let result = await autotask.CompanyContacts.delete(0, contactIdCreated);
   // console.log('delete result: %o', result);
   expect(result).toBeDefined();
-  let {item: contactAfterUpdate} = await api.Companies.get(contactIdCreated);
+  let {item: contactAfterUpdate} = await autotask.Companies.get(contactIdCreated);
   expect(contactAfterUpdate).toBeDefined();
 });
 
 test('item is null when when get by id not found', async () => {
-  let result = await api.Companies.get(9999999);
+  let result = await autotask.Companies.get(9999999);
   expect(result).toBeDefined();
   expect(result.item).toBe(null);
 });

@@ -1,5 +1,13 @@
 # Autotask REST API NodeJS Connector
 
+# v2 Release Notes
+
+## Breaking changes:
+1. Codebase now uses native fetch and requires Node > 18.0.0. (Removed dependency on `isomorphic-fetch`.)
+1. Removed the api() method. All API entity references are now available directly on the AutotaskRestApi instance.
+1. API calls automatically invoke the `zoneInformation` API when needed. No initialization is necessary.
+
+
 This connector simplifies interaction with the [Autotask PSA REST API](https://ww3.autotask.net/help/DeveloperHelp/Content/AdminSetup/2ExtensionsIntegrations/APIs/REST/REST_API_Home.htm) for developers using NodeJS.
 
 > Please insure you are using a LTS version of NodeJS, or at least a version that supports ES6 promises.
@@ -19,13 +27,12 @@ const autotask = new AutotaskRestApi(
 );
 ```
 
-The `.api()` method returns a convenience object that has all available entities as well as API methods you can use on each entity. This provides a simple and readable syntax for interacting with the API. 
-
-> The Autotask REST API has endpoints ("zones") distributed around the world. The connector automatically determines the correct endpoint when you invoke the `.api()` method, remembering the zone url for subsequent API calls. 
+> The Autotask REST API has endpoints ("zones") distributed around the world. The connector **automatically determines the correct endpoint when you make your first API call**. There is no need to get the zone information separately.
 
 ```javascript
-let api = await autotask.api();
-let company = await api.Companies.get(0);//Get the root company
+
+let company = await autotask.Companies.get(0);//Get the root company
+
 ```
 
 ## Methods Available on Each Entity
@@ -39,7 +46,7 @@ Counts entities. Use Autotask **query filter syntax** to provide criteria for th
 
 ```javascript
 // Count companies with a CompanyName beginning with "B"
-result = await api.Companies.count({
+result = await autotask.Companies.count({
   filter:[
     {
         "op": "beginsWith",
@@ -51,7 +58,7 @@ result = await api.Companies.count({
 // result = {queryCount: 7}
 
 // Count all the contacts in Autotask
-result = await api.Contacts.count({
+result = await autotask.Contacts.count({
   filter:[
     {
         "op": "gte",
@@ -67,7 +74,7 @@ result = await api.Contacts.count({
 ### get
 Get a single entity by id.
 ```javascript
-let product = await api.Products.get(232486923);
+let product = await autotask.Products.get(232486923);
 // product = { item: { id: 232486923, ...product object properties... } }
 ```
 
@@ -83,7 +90,7 @@ Get a entity attachment data by id
 ```javascript
 // TicketID 129873
 // AttachmentID 232486923
-let ticketAttachment = await api.TicketAttachments.get(129873, 232486923);
+let ticketAttachment = await autotask.TicketAttachments.get(129873, 232486923);
 
 // ticketAttachment = { items: { id: 232486923, ..., data: "iVBORw0KGgoAAAANSUhEUgAAAV8AAAC (...the rest of the base64 ecoded data)..." } }
 ```
@@ -93,7 +100,7 @@ let ticketAttachment = await api.TicketAttachments.get(129873, 232486923);
 Query for entities matching a filter expression.
 ```javascript
 //Find a company by name
-let result = await api.Companies.query({
+let result = await autotask.Companies.query({
   filter:[
     {
         "op": "eq",
@@ -136,7 +143,7 @@ Query results take the following form (example shows the Company returned from t
 
 ```javascript
 //Find a company by name
-let result = await api.Companies.query({
+let result = await autotask.Companies.query({
   filter:[
     {
         "op": "eq",
@@ -181,7 +188,7 @@ Running the above query yields a response:
 It is possible to query user-defined fields by including a `"udf": true` to UDF field expressions in filter conditions. In the example below, a Company-level UDF named "Number of Employees" exists. We can query to see which companies have more than 0 employees like this:
 
 ```javascript
-result = await api.Companies.query({
+result = await autotask.Companies.query({
   filter:[
     {
         "op": "gt",
@@ -206,7 +213,7 @@ The following creates **Company** using the **Companies** api.
       Phone: '8005551212',
       OwnerResourceID: 29683995
     };;
-result = await api.Companies.create(myCompany);
+result = await autotask.Companies.create(myCompany);
 ```
 ..which yields the `result`:
 ```json
@@ -227,7 +234,7 @@ To illustrate the **child record** relationship, the following example will crea
   StartDateTime: '2020-06-15',
   EndDateTime: '2020-06-16',
 };
-result = await api.CompanyToDos.create(0, myToDo);
+result = await autotask.CompanyToDos.create(0, myToDo);
 ```
 
 Note the use of the parent id (company id = 0) as the first argument of the `create` method. The parent id is required as the first parameter of the method.
@@ -247,7 +254,7 @@ Updates an entity. This updates **ONLY the fields you specify**, leaving other f
 The following example updates  a **Company** phone number.
 ```javascript
 
-let updateResult = await api.Company.update({"id":45701237, phone: "1112223344"});
+let updateResult = await autotask.Company.update({"id":45701237, phone: "1112223344"});
 
 ```
 
@@ -256,13 +263,13 @@ Here is another example of the **child record relationship**, using the Contacts
 Contact before we can update it.
 
 ```javascript
-// Here we are using the api.Contacts handle. Queries don't require knowledge of parent-child structure.
-let queryResult = await api.Contacts.query({filter:[{field:'firstName', op:FilterOperators.eq, value:'Zaphod'}]});
+// Here we are using the autotask.Contacts handle. Queries don't require knowledge of parent-child structure.
+let queryResult = await autotask.Contacts.query({filter:[{field:'firstName', op:FilterOperators.eq, value:'Zaphod'}]});
 
 let companyID = queryResult.items[0].companyID;
 
-// However, here we are using the api.CompanyContacts handle because of the structure required by the Autotask REST API. The parent entity is provided as the first argument of the update.
-let updateResult = await api.CompanyContacts.update(companyID, {"id":30684047, middleName: "Hortensius"});
+// However, here we are using the autotask.CompanyContacts handle because of the structure required by the Autotask REST API. The parent entity is provided as the first argument of the update.
+let updateResult = await autotask.CompanyContacts.update(companyID, {"id":30684047, middleName: "Hortensius"});
 ```
 
 
@@ -292,7 +299,7 @@ Get metadata about a given entity's fields. This includes information about the 
 [related Autotask documentation](https://ww3.autotask.net/help/DeveloperHelp/Content/APIs/REST/API_Calls/REST_EntityInformationCall.htm)
 
 ```javascript
-result = await api.AccountToDo.fieldInfo();
+result = await autotask.AccountToDo.fieldInfo();
 ```
 
 This will yield a `result`:
@@ -366,7 +373,7 @@ The Modules entity allows you to gather information about the active status of m
 Example:
 
 ```javascript
-result = await api.Modules.get();
+result = await autotask.Modules.get();
 ```
 
 results:
@@ -585,7 +592,7 @@ try{
     Phone: '8005551212',
     OwnerResourceID: 29683995
   };
-  let result = await api.Companies.create(myCompany);
+  let result = await autotask.Companies.create(myCompany);
 
 } catch ( err ){
   if( err instance of AutotaskApiError ){
