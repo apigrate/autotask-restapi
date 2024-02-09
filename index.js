@@ -1,5 +1,5 @@
 /*
-  Copyright 2020-2023 Apigrate LLC
+  Copyright 2020-2024 Apigrate LLC
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -13,12 +13,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-require('isomorphic-fetch');
 const debug = require('debug')('autotask:restapi');
 const verbose = require('debug')('autotask:restapi:verbose');
 const https = require('https');
 const crypto = require('crypto');
 
+/**
+ * Autotask REST API NodeJS connector.
+ * 
+ * This class provides a simple interface to the Autotask REST API. 
+ */
 class AutotaskRestApi {
   /**
    * Create an Autotask Rest API connector instance.
@@ -226,148 +230,118 @@ class AutotaskRestApi {
       {name:'WorkTypeModifiers'},
       {name:'ZoneInformation'},
     ];
-    this.connector = {};
-  }
 
-  /**
-   * This initializes the connector methods and guarantees they used the correct global web services zone.
-   * 
-   * Calling init on the same instance more than once per instance has no effect and will not generate an error.
-   */
-  async _init(){
-    if(!this.zoneInfo){
-      this.zoneInfo = await this._get('/zoneInformation', {user: this.user});
-      for(let entity of this.available_entities){
+    // connector initialization
+    // this.connector = {};
+    for(let entity of this.available_entities){
         
-        let missingEntityErrorMsg = `No ${entity.name} parameter was provided. Please provide the ${entity.name} data.`;
-        let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id.`;
-          
-        this.connector[entity.name] = {
-          parent: entity.childOf,
-          isChild: entity.childOf ? true : false,
+      let missingEntityErrorMsg = `No ${entity.name} parameter was provided. Please provide the ${entity.name} data.`;
+      let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id.`;
+        
+      this[entity.name] = {
+        parent: entity.childOf,
+        isChild: entity.childOf ? true : false,
 
-          query : async (search)=>{
-            if(entity.name==='Modules') return await this._get(`/${entity.name}`);
-            return await this._post(`/${entity.name}/query`, search);
-          },
+        query : async (search)=>{
+          if(entity.name==='Modules') return await this._get(`/${entity.name}`);
+          return await this._post(`/${entity.name}/query`, search);
+        },
 
-          count : async (search)=>{
-            return await this._post(`/${entity.name}/query/count`, search);
-          },
+        count : async (search)=>{
+          return await this._post(`/${entity.name}/query/count`, search);
+        },
 
-          get : async (id)=>{
-            if(entity.name==='Modules') return await this._get(`/${entity.name}`);
-            return await this._get(`/${entity.name}/${id}`);
-          },
+        get : async (id)=>{
+          if(entity.name==='Modules') return await this._get(`/${entity.name}`);
+          return await this._get(`/${entity.name}/${id}`);
+        },
 
-          update : async (toSave, opts)=>{
-            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._patch(`/${entity.name}`, toSave, opts);
-          },
+        update : async (toSave, opts)=>{
+          if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+          return await this._patch(`/${entity.name}`, toSave, opts);
+        },
 
-          create : async (toSave, opts)=>{
-            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._post(`/${entity.name}`, toSave, opts);
-          },
+        create : async (toSave, opts)=>{
+          if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+          return await this._post(`/${entity.name}`, toSave, opts);
+        },
 
-          delete : async (id)=>{
-            if(!id) throw new Error(`${missingIdErrorMessage}`);
-            return await this._delete(`/${entity.name}/${id}`);
-          },
+        delete : async (id)=>{
+          if(!id) throw new Error(`${missingIdErrorMessage}`);
+          return await this._delete(`/${entity.name}/${id}`);
+        },
 
-          //missing properties set to null!
-          replace : async (toSave, opts)=>{
-            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._put(`/${entity.name}`, toSave, opts);
-          },
+        //missing properties set to null!
+        replace : async (toSave, opts)=>{
+          if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+          return await this._put(`/${entity.name}`, toSave, opts);
+        },
 
-          info: async ()=>{
-            return await this._get(`/${entity.name}/entityInformation`);
-          },
+        info: async ()=>{
+          return await this._get(`/${entity.name}/entityInformation`);
+        },
 
-          fieldInfo: async ()=>{
-            return await this._get(`/${entity.name}/entityInformation/fields`);
-          },
+        fieldInfo: async ()=>{
+          return await this._get(`/${entity.name}/entityInformation/fields`);
+        },
 
-          udfInfo: async ()=>{
-            return await this._get(`/${entity.name}/entityInformation/userDefinedFields`);
-          },
-        };
+        udfInfo: async ()=>{
+          return await this._get(`/${entity.name}/entityInformation/userDefinedFields`);
+        },
+      };
 
-        //Adjust endpoints for child entities.
-        if(entity.childOf){
-          let missingParentIdErrorMsg = `${entity.name} are children of ${entity.childOf}. Please provide the id of the ${entity.childOf} entity as the first parameter. It must be an integer.`;
-          let missingEntityErrorMsg = `No ${entity.subname} was provided. Please provide the ${entity.subname} data as the second parameter.`;
-          let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id as the second parameter. It must be an integer.`;
+      //Adjust endpoints for child entities.
+      if(entity.childOf){
+        let missingParentIdErrorMsg = `${entity.name} are children of ${entity.childOf}. Please provide the id of the ${entity.childOf} entity as the first parameter. It must be an integer.`;
+        let missingEntityErrorMsg = `No ${entity.subname} was provided. Please provide the ${entity.subname} data as the second parameter.`;
+        let missingIdErrorMessage = `The 'id' parameter is required. Please provide the ${entity.subname} id as the second parameter. It must be an integer.`;
 
-          // Attachment child entities require special handling...
-          if([
-            'ConfigurationItemAttachments',
-            'ConfigurationItemNoteAttachments',
-            'OpportunityAttachments',
-            'TaskAttachments',
-            'TaskNoteAttachments',
-            'TicketAttachments',
-            'TicketNoteAttachments',
-            'TimeEntryAttachments'
-          ].includes(entity.name)){
-            this.connector[entity.name].get = async (parentId, id)=>{
-              if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
-              if(id === null || typeof id === 'undefined' ) throw new Error(`${missingIdErrorMessage}`);
-              //This is the only attachment endpoint that returns the base64 encoded data. Other approaches yield `null` for the `data` property
-              return await this._get(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
-            };
-          }
-
-
-          //create, update, replace, and delete have different signatures
-          this.connector[entity.name].update = async (parentId, toSave, opts)=>{
-            if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
-            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._patch(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
-          };
-
-          this.connector[entity.name].create = async (parentId, toSave, opts)=>{
-            if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
-            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._post(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
-          };
-
-          this.connector[entity.name].delete = async (parentId, id)=>{
+        // Attachment child entities require special handling...
+        if([
+          'ConfigurationItemAttachments',
+          'ConfigurationItemNoteAttachments',
+          'OpportunityAttachments',
+          'TaskAttachments',
+          'TaskNoteAttachments',
+          'TicketAttachments',
+          'TicketNoteAttachments',
+          'TimeEntryAttachments'
+        ].includes(entity.name)){
+          this[entity.name].get = async (parentId, id)=>{
             if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
             if(id === null || typeof id === 'undefined' ) throw new Error(`${missingIdErrorMessage}`);
-            return await this._delete(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
-          };
-
-          this.connector[entity.name].replace = async (parentId, toSave, opts)=>{
-            if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
-            if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
-            return await this._put(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
+            //This is the only attachment endpoint that returns the base64 encoded data. Other approaches yield `null` for the `data` property
+            return await this._get(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
           };
         }
 
+        //create, update, replace, and delete have different signatures
+        this[entity.name].update = async (parentId, toSave, opts)=>{
+          if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+          if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+          return await this._patch(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
+        };
+        
+        this[entity.name].create = async (parentId, toSave, opts)=>{
+          if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+          if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+          return await this._post(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
+        };
 
+        this[entity.name].delete = async (parentId, id)=>{
+          if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+          if(id === null || typeof id === 'undefined' ) throw new Error(`${missingIdErrorMessage}`);
+          return await this._delete(`/${entity.childOf}/${parentId}/${entity.subname}/${id}`);
+        };
+
+        this[entity.name].replace = async (parentId, toSave, opts)=>{
+          if(typeof parentId !== 'number') throw new Error(`${missingParentIdErrorMsg}`);
+          if(!toSave) throw new Error(`${missingEntityErrorMsg}`);
+          return await this._put(`/${entity.childOf}/${parentId}/${entity.subname}`, toSave, opts);
+        };
       }
-    }
-  }
 
-  /**
-   * Access the Autotask REST API. 
-   * 
-   * @returns the connector instance object, which has references to every
-   * entity in the API. You can use each entity to perform API calls.
-   * 
-   * @example
-   * let api = await autotask.api();
-   * api.Companies.get(0);
-   * api.Tickets.query( myTicketQuery );
-   * api.CompanyContacts.create(0, myContact );
-   */
-  async api(){
-    if(!this.zoneInfo){
-      await this._init();
     }
-    return this.connector;
   }
 
   /** lookup/query an entity */
@@ -403,6 +377,23 @@ class AutotaskRestApi {
    */
   async _fetch(method, endpoint, query, payload, opts){
     try{
+      if(!this.zoneInfo){
+        //Lazy init zone info on the fly.
+        try {
+          let autotaskZoneInfoResponse = await fetch(
+            `${this.base_url}v${this.version}/zoneInformation?user=${encodeURIComponent(this.user)}`
+          );
+          if(autotaskZoneInfoResponse.ok){
+            this.zoneInfo = await autotaskZoneInfoResponse.json();
+            verbose(`Zone Information: ${JSON.stringify(this.zoneInfo)}`);
+          } else {
+            console.error(`Error fetching zone information: HTTP-${autotaskZoneInfoResponse.status}`);
+          }
+        } catch (err) {
+          console.error(`Error fetching zone information: ${err}`);
+        }
+      }
+
       let fetchParms = {
         method,
         headers: {
