@@ -27,18 +27,21 @@ it('can get by id', async () => {
 
 test('can query multiple.', async () => {
 
-  let result = await autotask.Companies.query({filter:[
-    {
-      field: "companyName",
-      op: FilterOperators.beginsWith,
-      value: "A"
-    },
-    {
-      field: "id",
-      op: FilterOperators.gt,
-      value: 0
-    }
-  ]});
+  let result = await autotask.Companies.query({
+    filter: [
+      {
+        field: "companyName",
+        op: FilterOperators.beginsWith,
+        value: "A",
+      },
+      {
+        field: "id",
+        op: FilterOperators.gt,
+        value: 0,
+      },
+    ],
+    MaxRecords: 5,
+  });
   // console.log('query result: %o', result);
   expect(result.items).toBeDefined();
   let item = result.items[0];
