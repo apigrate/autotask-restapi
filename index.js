@@ -32,7 +32,13 @@ class AutotaskRestApi {
    * @param {object} options
    * @param {string} options.base_url the REST API base url. (Default https://webservices2.autotask.net/ATServicesRest/)
    * @param {string} options.version Autotask REST API decimal version (e.g. 1.0). (Default 1.0);
-   * 
+   * @param {object?} options.retry Retry options for the connector.
+   * @param {boolean?} options.retry.enabled If true, will retry the request as configured. (Default true)
+   * @param {number?} options.retry.attempts If enabled, the number of times to retry the request. (Default 10)
+   * @param {number?} options.retry.delay If enabled, the number of milliseconds to wait before trying again.
+   *  (Default 1000)
+   * @param {number?} options.retry.delay_factor If enabled, the factor by which to increase the delay between retries.
+   *  (Default 2)
    */
   constructor(user, secret, code, options){
     if(!user)throw new Error(`An API user is required.`);
@@ -46,6 +52,12 @@ class AutotaskRestApi {
     this.base_url = `https://webservices.autotask.net/ATServicesRest/`; //As returned by zoneInformation.url
     this.version = '1.0';
     
+    this.retryOptions = options?.retry ?? {};
+    this.retryOptions.enabled ??= true;
+    this.retryOptions.attempts ??= 10;
+    this.retryOptions.delay ??= 1000;
+    this.retryOptions.delay_factor ??= 2;
+
     if(options){
       if(options.base_url){
         this.base_url = options.base_url;
@@ -376,6 +388,35 @@ class AutotaskRestApi {
    * @param {boolean} opts.ImpersonationResourceId specifies an Autotask Resource ID to impersonate on a create/update operation
    */
   async _fetch(method, endpoint, query, payload, opts){
+    let attempts = 0;
+    /**
+     * Wrapper around `fetch` that retries on 429 and 5xx errors.
+     *
+     * @param {string | URL | Request} input Passed directly to `fetch`.
+     * @param {RequestInit?} init Passed directly to `fetch`.
+     * @returns {Promise<Response>} Same as `fetch`.
+     * @see fetch
+     */
+    const fetchWithRetry = async (input, init) => {
+      attempts++;
+      const response = await fetch(input, init);
+      // Exit early if no errors.
+      if (response.ok) return response;
+
+      // Retry on 429 or 5xx errors, if configured to do so.
+      if (this.retryOptions.enabled && attempts < this.retryOptions.attempts && response.status === 429) {
+        // Exponential backoff.
+        const delay = this.retryOptions.delay * Math.pow(this.retryOptions.delay_factor, attempts);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        // Retry.
+        return fetchWithRetry(input, init);
+      }
+
+      // If we're here, we've encountered a non-retryable error or exhausted our retries. In this case, just return the
+      // response as-is.
+      return response;
+    }
+
     try{
       if(!this.zoneInfo){
         //Lazy init zone info on the fly.
@@ -430,7 +471,7 @@ class AutotaskRestApi {
       fetchParms.agent = new https.Agent({
         secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT
       });
-      let response = await fetch(`${full_url}`, fetchParms);
+      let response = await fetchWithRetry(`${full_url}`, fetchParms);
       
       if(response.ok){
         let result = await response.json();

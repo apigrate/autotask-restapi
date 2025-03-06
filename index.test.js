@@ -1,5 +1,5 @@
 require('dotenv').config();
-let {AutotaskRestApi, FilterOperators} = require('.');
+let {AutotaskRestApi, FilterOperators, AutotaskApiError} = require('.');
 var autotask = null;
 
 beforeAll(async ()=>{
@@ -24,6 +24,33 @@ it('can get by id', async () => {
   expect(company).toBeDefined();
   expect(company.id).toBe(0);
 });
+
+describe('retries', () => {
+  it('should retry on 429', async () => {
+    // Mock fetch to return 429 once, then reset.
+    const fetchMock = jest.spyOn(global, 'fetch').mockImplementationOnce(() => Promise.resolve({
+      status: 429, ok: false, json: () => Promise.resolve({}),
+    }));
+
+    let result = await autotask.Companies.get(0);
+    let company = result.item
+
+    expect(company).toBeDefined();
+    expect(company.id).toBe(0);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  })
+
+  it('should not retry if disabled', async () => {
+    // Mock fetch to return 429 once, then reset.
+    const fetchMock = jest.spyOn(global, 'fetch').mockImplementationOnce(() => Promise.resolve({
+      status: 429, ok: false, text: () => Promise.resolve('')
+    }));
+    jest.replaceProperty(autotask.retryOptions, 'enabled', false);
+
+    await expect(autotask.Companies.get(0)).rejects.toThrow(AutotaskApiError);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  })
+})
 
 test('can query multiple.', async () => {
 
