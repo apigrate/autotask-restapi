@@ -33,5 +33,11 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "files": [
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "package.json"
+  ]
 }
