@@ -224,6 +224,9 @@ class AutotaskRestApi {
       {name:'TicketSecondaryResources', childOf: 'Tickets', subname: 'SecondaryResources'},
       {name:'TimeEntries'},
       {name:'TimeEntryAttachments', childOf: 'TimeEntries', subname: 'Attachments'},
+      {name:'TimeOffRequestsApprove', childOf: 'TimeOffRequests', subname: 'Approve'},
+      {name:'TimeOffRequests'},
+      {name:'TimeOffRequestsReject', childOf: 'TimeOffRequests', subname: 'Reject'},
       {name:'UserDefinedFieldDefinitions'},
       {name:'UserDefinedFieldListItems', childOf: 'UserDefinedFields', subname: 'ListItems'},//note, no parent native entity
       {name:'WebhookEventErrorLogs'},

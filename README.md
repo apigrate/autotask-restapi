@@ -481,6 +481,7 @@ The following is a list of all Autotask entities supported by the connector:
 * TicketCategories
 * TicketHistory
 * TimeEntries
+* TimeOffRequests
 * UserDefinedFieldDefinitions
 * WebhookEventErrorLogs
 * WorkTypeModifiers
@@ -576,6 +577,8 @@ The REST API introduces a parent-child relationship among some Autotask entities
 * TicketRmaCredits &rarr; Tickets/RmaCredits
 * TicketSecondaryResources &rarr; Tickets/SecondaryResources
 * TimeEntryAttachments &rarr; TimeEntries/Attachments
+* TimeOffRequestsApprove &rarr; TimeOffRequests/Approve
+* TimeOffRequestsReject &rarr; TimeOffRequests/Reject
 * UserDefinedFieldListItems &rarr; UserDefinedFields/ListItems
 
 ## Error Handling
